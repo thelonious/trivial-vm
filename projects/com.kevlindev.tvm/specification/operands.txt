@@ -1,0 +1,6 @@
+literal
+address
+address, indexed
+address, indirect
+address, indirect, pre-indexed
+address, indirect, post-indexed

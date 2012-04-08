@@ -1,0 +1,33 @@
+# Logical operators
+AND
+OR
+EOR
+NOT
+
+# Arithmetic
+ADD
+ADC
+SUB
+SBC
+INC
+DEC
+ROR
+ROL
+SHL
+SHR
+ASR
+CMP
+
+# Flow control
+BRA/JMP
+BLT/JLT
+BLE/JLE
+BEQ/JEQ
+BGE/JGE
+BGT/JGT
+JSR
+RET
+BRK
+
+# Miscellaneous
+LOAD
