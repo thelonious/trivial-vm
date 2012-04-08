@@ -1,7 +1,9 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.assembler;
 
 import java.util.ArrayList;
-import com.kevlindev.tvm.ast.*;
+
+import com.kevlindev.tvm.assembler.ast.*;
+
 import beaver.*;
 
 /**

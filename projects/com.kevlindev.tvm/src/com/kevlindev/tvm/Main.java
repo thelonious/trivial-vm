@@ -6,7 +6,10 @@ import java.util.List;
 
 import beaver.Parser.Exception;
 
-import com.kevlindev.tvm.ast.Instruction;
+import com.kevlindev.text.Table;
+import com.kevlindev.tvm.assembler.TVMLexer;
+import com.kevlindev.tvm.assembler.TVMParser;
+import com.kevlindev.tvm.assembler.ast.Instruction;
 import com.kevlindev.utils.IOUtils;
 
 public class Main {
@@ -33,26 +36,39 @@ public class Main {
 	}
 
 	private static void printResult(List<Instruction> instructions) {
+		Table table = new Table();
+
 		for (Instruction instruction : instructions) {
 			String label = instruction.getLabel();
 
 			if (label != null && !label.isEmpty()) {
-				System.out.println(label);
+				table.addRow(label);
 			}
-			
+
+			// get opcode
 			String opcode = instruction.opcode.toString();
 
-			String line = "\t" + opcode;
-			
+			// get operands
+			String operands = "";
+
 			if (instruction.operand1 != null) {
-				line += "\t" + instruction.operand1.toString();
+				operands = instruction.operand1.toString();
 			}
-			
 			if (instruction.operand2 != null) {
-				line += ", " + instruction.operand2.toString();
+				operands += ", " + instruction.operand2.toString();
 			}
-			
-			System.out.println(line);
+
+			// get bytes
+			String byte1 = String.format("; %02X", instruction.opcode.ordinal());
+			String byte2 = "  ";
+			String byte3 = "  ";
+
+			// add row
+			table.addRow("", opcode, operands, byte1, byte2, byte3);
 		}
+
+		//table.setWidth(80, 20);
+
+		System.out.println(table.toString());
 	}
 }

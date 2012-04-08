@@ -1,5 +1,5 @@
 // java -jar beaver.jar -T -w tvm-assembler.grammar
-%package "com.kevlindev.tvm";
+%package "com.kevlindev.tvm.assembler";
 
 %import "com.kevlindev.tvm.ast.*";
 

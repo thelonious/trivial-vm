@@ -1,4 +1,4 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.assembler;
 
 /**
  * This class lists terminals used by the

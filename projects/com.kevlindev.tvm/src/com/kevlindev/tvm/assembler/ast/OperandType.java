@@ -1,4 +1,4 @@
-package com.kevlindev.tvm.ast;
+package com.kevlindev.tvm.assembler.ast;
 
 public enum OperandType {
 	// @formatter:off

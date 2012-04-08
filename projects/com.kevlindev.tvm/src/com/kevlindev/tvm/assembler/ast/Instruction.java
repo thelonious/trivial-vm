@@ -1,4 +1,7 @@
-package com.kevlindev.tvm.ast;
+package com.kevlindev.tvm.assembler.ast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import beaver.Symbol;
 
@@ -28,5 +31,13 @@ public class Instruction extends Symbol {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public List<Byte> getBytes() {
+		List<Byte> result = new ArrayList<Byte>();
+
+		result.add((byte) opcode.getOpcode());
+
+		return result;
 	}
 }

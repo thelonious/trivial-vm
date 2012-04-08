@@ -1,4 +1,4 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.assembler;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -6,10 +6,11 @@ import java.io.StringReader;
 import beaver.Symbol;
 import beaver.Scanner;
 
-import com.kevlindev.tvm.TVMTokenType;
+import com.kevlindev.tvm.assembler.TVMTokenType;
 
 %%
 
+%public
 %class TVMLexer
 %extends Scanner
 %type Symbol

@@ -1,4 +1,4 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.assembler;
 
 import java.util.EnumSet;
 import java.util.HashMap;
