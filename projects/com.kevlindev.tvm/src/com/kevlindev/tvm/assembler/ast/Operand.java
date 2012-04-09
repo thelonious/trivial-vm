@@ -38,18 +38,22 @@ public class Operand extends BaseNode {
 				break;
 
 			case ADDRESS_INDIRECT:
+			case REGISTER_INDIRECT:
 				buffer.append("[").append(value1).append("]");
 				break;
 
 			case ADDRESS_INDIRECT_PRE_INDEXED:
+			case REGISTER_INDIRECT_PRE_INDEXED:
 				buffer.append("[").append(value1).append("+").append(value2).append("]");
 				break;
 
 			case ADDRESS_INDIRECT_POST_INDEXED:
+			case REGISTER_INDIRECT_POST_INDEXED:
 				buffer.append("[").append(value1).append("]").append("+").append(value2);
 				break;
 
 			case ADDRESS_INDIRECT_PRE_AND_POST_INDEXED:
+			case REGISTER_INDIRECT_PRE_AND_POST_INDEXED:
 				buffer.append("[").append(value1).append("+").append(value2).append("]+").append(value3);
 				break;
 		}

@@ -15,7 +15,7 @@ public enum OperandType {
 	LABEL(8),
 	
 	REGISTER(9),
-	REGISTER_INDEXED(10),
+	// REGISTER_INDEXED(10), // doesn't make sense as an addressing mode
 	REGISTER_INDIRECT(11),
 	REGISTER_INDIRECT_PRE_INDEXED(12),
 	REGISTER_INDIRECT_POST_INDEXED(13),

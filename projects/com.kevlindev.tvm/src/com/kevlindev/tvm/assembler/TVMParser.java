@@ -15,12 +15,13 @@ import com.kevlindev.tvm.assembler.ast.Instruction;
 public class TVMParser extends Parser {
 
 	static final ParsingTables PARSING_TABLES = new ParsingTables(
-		"U9nzaMbFma0GXjyjBPLQg4Yf1ueYe8dHBqO$cFZZ#BlU9rweuxlRAJOajfjdzjcTlT81S26" +
-		"2EhRGnnw2kIt1dtkJtiC6Dj52WY56y1XhSeaLB6kcmqnkNLgCI4SDUeYKSHkx62136wjOmp" +
-		"fs0DuGygO6poaivec5#tJ3ksgC0TVOdJPs#OvcAVDdzdtvgEFSTz6E8pQVpV0jm7W2zzLji" +
-		"2uYCvthqt$OjoUQq$cOfEg7v9YSae7ExPCZSaREotirFzJ#P36ti2uaaRvfgdF57RsAVKdL" +
-		"kV$i6Mb$KB5cd7VsdyYN#gSyoBsyqgPk$4AUd3sJHxcJMxcXVP1tkPOhUPEPV7D1nkePrj4" +
-		"ZXhNqY65LVU8fnbKnOTLo0YLaLOsZLI9Lib#1FrnC");
+		"U9oTajbI0Z4GHMy640GTaLKsHKKK57omBBNSg$mmVzPztr1nQMyoZL8yy61Ifs#dqvraQXh" +
+		"0aGX6i815B2ECI9zVGmnpcCSu9h225ZpQa9mWyPjJW#yoQiomcgIE8KwYA63KnJAe88L951" +
+		"cjeu4cqiWYXpoci8GIofZ6B6PG1LWLOrMSDoJxVCFA4D$ZyTuaJqevc#MxUZc6qsOOPbZrg" +
+		"JxVOZ6yBwYsCy9feq6suSgZpJZRMmFjOneHwL9WVOwKQfaOaZZMFOtxfA9#axJ8AjdGs2PP" +
+		"9rjaMsDjiaFsTBrFTiaXEUW$N$Uhgck3UmDvzXiY#WqTZPLK2qFgyiFE$IySTTN6a9ns8F9" +
+		"DFjNlofLSIeVUYri$aqVdFP47SaTkNEIMNCk5dCizlNVo9cToAg$o8LzCAB9Z37l78uRzun" +
+		"73JWeJJp6kNsnt14IKQ5$yBvPslMNuvmCoIku79jLfh0==");
 
 	public TVMParser() {
 		super(PARSING_TABLES);
@@ -127,21 +128,64 @@ public class TVMParser extends Parser {
 					
 			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, r1, r2);
 			}
-			case 16: // Source = NUMBER.n
+			case 15: // Container = REGISTER.r
+			{
+					final Symbol _symbol_r = _symbols[offset + 1];
+					final String r = (String) _symbol_r.value;
+					
+			return new Operand(OperandType.REGISTER, r);
+			}
+			case 16: // Container = LBRACKET REGISTER.r RBRACKET
+			{
+					final Symbol _symbol_r = _symbols[offset + 2];
+					final String r = (String) _symbol_r.value;
+					
+			return new Operand(OperandType.REGISTER_INDIRECT, r);
+			}
+			case 17: // Container = LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET
+			{
+					final Symbol _symbol_r1 = _symbols[offset + 2];
+					final String r1 = (String) _symbol_r1.value;
+					final Symbol _symbol_r2 = _symbols[offset + 4];
+					final String r2 = (String) _symbol_r2.value;
+					
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_INDEXED, r1, r2);
+			}
+			case 18: // Container = LBRACKET REGISTER.r1 RBRACKET PLUS REGISTER.r2
+			{
+					final Symbol _symbol_r1 = _symbols[offset + 2];
+					final String r1 = (String) _symbol_r1.value;
+					final Symbol _symbol_r2 = _symbols[offset + 5];
+					final String r2 = (String) _symbol_r2.value;
+					
+			return new Operand(OperandType.REGISTER_INDIRECT_POST_INDEXED, r1, r2);
+			}
+			case 19: // Container = LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET PLUS REGISTER.r3
+			{
+					final Symbol _symbol_r1 = _symbols[offset + 2];
+					final String r1 = (String) _symbol_r1.value;
+					final Symbol _symbol_r2 = _symbols[offset + 4];
+					final String r2 = (String) _symbol_r2.value;
+					final Symbol _symbol_r3 = _symbols[offset + 7];
+					final String r3 = (String) _symbol_r3.value;
+					
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_AND_POST_INDEXED, r1, r2, r3);
+			}
+			case 21: // Source = NUMBER.n
 			{
 					final Symbol _symbol_n = _symbols[offset + 1];
 					final String n = (String) _symbol_n.value;
 					
 			return new Operand(OperandType.NUMBER, n);
 			}
-			case 20: // Destination = ADDRESS.a
+			case 24: // Destination = ADDRESS.a
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final String a = (String) _symbol_a.value;
 					
 			return new Operand(OperandType.ADDRESS, a);
 			}
-			case 21: // Destination = IDENTIFIER.i
+			case 25: // Destination = IDENTIFIER.i
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final String i = (String) _symbol_i.value;
@@ -150,10 +194,9 @@ public class TVMParser extends Parser {
 			}
 			case 0: // Grammar = Statements
 			case 4: // StatementWithLabel = Statement
-			case 15: // Source = Container
-			case 17: // Location = ADDRESS
-			case 18: // Location = IDENTIFIER
-			case 19: // Location = REGISTER
+			case 20: // Source = Container
+			case 22: // Location = ADDRESS
+			case 23: // Location = IDENTIFIER
 			{
 				return _symbols[offset + 1];
 			}

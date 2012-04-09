@@ -81,6 +81,27 @@ Container
 		{:
 			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, r1, r2);
 		:}
+
+	|	REGISTER.r
+		{:
+			return new Operand(OperandType.REGISTER, r);
+		:}
+	|	LBRACKET REGISTER.r RBRACKET
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT, r);
+		:}
+	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_INDEXED, r1, r2);
+		:}
+	|	LBRACKET REGISTER.r1 RBRACKET PLUS REGISTER.r2
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_POST_INDEXED, r1, r2);
+		:}
+	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET PLUS REGISTER.r3
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_AND_POST_INDEXED, r1, r2, r3);
+		:}
 	;
 
 Source
@@ -94,7 +115,6 @@ Source
 Location
 	=	ADDRESS
 	|	IDENTIFIER
-	|	REGISTER
 	;
 
 Destination
