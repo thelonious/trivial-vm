@@ -8,13 +8,13 @@
 
 %class "TVMParser";
 
-%terminals BRK, LOAD, INC, BNE;
+%terminals BRK, SET, INC, BNE;
 %terminals ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER;
 %terminals COMMA, LBRACKET, RBRACKET, PLUS;
 
 %typeof Statement = "Instruction";
 %typeof Container, Source, Destination = "Operand";
-%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER = "String";
+%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER, Location = "String";
 
 %goal Grammar;
 
@@ -38,9 +38,9 @@ StatementWithLabel
 	;
 
 Statement
-	=	LOAD Container.c COMMA Source.s
+	=	SET Container.c COMMA Source.s
 		{:
-			return new Instruction(Opcode.LOAD, c, s);
+			return new Instruction(Opcode.SET, c, s);
 		:}
 	|	INC Container.c
 		{:
@@ -57,29 +57,29 @@ Statement
 	;
 
 Container
-	=	ADDRESS.a
+	=	Location.l
 		{:
-			return new Operand(OperandType.ADDRESS, a);
+			return new Operand(OperandType.ADDRESS, l);
 		:}
-	|	ADDRESS.a PLUS REGISTER.r
+	|	Location.l PLUS REGISTER.r
 		{:
-			return new Operand(OperandType.ADDRESS_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDEXED, l, r);
 		:}
-	|	LBRACKET ADDRESS.a RBRACKET
+	|	LBRACKET Location.l RBRACKET
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT, a);
+			return new Operand(OperandType.ADDRESS_INDIRECT, l);
 		:}
-	|	LBRACKET ADDRESS.a PLUS REGISTER.r RBRACKET
+	|	LBRACKET Location.l PLUS REGISTER.r RBRACKET
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, l, r);
 		:}
-	|	LBRACKET ADDRESS.a RBRACKET PLUS REGISTER.r
+	|	LBRACKET Location.l RBRACKET PLUS REGISTER.r
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, l, r);
 		:}
-	|	REGISTER.r
+	|	LBRACKET Location.l PLUS REGISTER.r1 RBRACKET PLUS REGISTER.r2
 		{:
-			return new Operand(OperandType.REGISTER, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, r1, r2);
 		:}
 	;
 
@@ -89,6 +89,12 @@ Source
 		{:
 			return new Operand(OperandType.NUMBER, n);
 		:}
+	;
+
+Location
+	=	ADDRESS
+	|	IDENTIFIER
+	|	REGISTER
 	;
 
 Destination

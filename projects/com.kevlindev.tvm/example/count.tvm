@@ -1,7 +1,7 @@
 ; A simple counting example
 
-	LOAD	r1, #0
+	SET	r1, #0
 :advance
-	INC		r1
-	BNE		advance
+	INC	r1
+	BNE	advance
 	BRK

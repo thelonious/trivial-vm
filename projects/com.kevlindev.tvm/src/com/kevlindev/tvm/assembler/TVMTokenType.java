@@ -22,7 +22,7 @@ public enum TVMTokenType {
 	IDENTIFIER(Terminals.IDENTIFIER),
 	
 	BRK(Terminals.BRK),
-	LOAD(Terminals.LOAD),
+	SET(Terminals.SET),
 	INC(Terminals.INC),
 	BNE(Terminals.BNE);
 	// @formatter:on

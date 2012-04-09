@@ -15,11 +15,12 @@ import com.kevlindev.tvm.assembler.ast.Instruction;
 public class TVMParser extends Parser {
 
 	static final ParsingTables PARSING_TABLES = new ParsingTables(
-		"U9o5aLbJma0GX7iJY22O4n2Gg1HQMFhaF#G7Uw1oAA9ZxsP81HzWgxxftjbZzW3mA880VGn" +
-		"nMMeTjTAVq5$X6XwZBqyuHnlHNZn51osCq4G32SuG8aMC35tqa6E02u0x1jofKQfTjVCXVS" +
-		"GLYOiT6DRozsB8CxJfKjPfqXlYCHhsRBsC5SOpk1ROOBs8R3Kt84FIc#cOvYTaglwEvEIMt" +
-		"6lkWTnKvezKnzLz$iFcsHlh6JQQCwhfeRN7gDmpFpId4FabM$KRcSkhhEYMhhyWxyvzo1lZ" +
-		"5$cK5tcMjNpB3mSoznS9RvDGOsfCZVZs4Ns1uUjRVAMk6FvLGQPq$m0QTarD");
+		"U9nzaMbFma0GXjyjBPLQg4Yf1ueYe8dHBqO$cFZZ#BlU9rweuxlRAJOajfjdzjcTlT81S26" +
+		"2EhRGnnw2kIt1dtkJtiC6Dj52WY56y1XhSeaLB6kcmqnkNLgCI4SDUeYKSHkx62136wjOmp" +
+		"fs0DuGygO6poaivec5#tJ3ksgC0TVOdJPs#OvcAVDdzdtvgEFSTz6E8pQVpV0jm7W2zzLji" +
+		"2uYCvthqt$OjoUQq$cOfEg7v9YSae7ExPCZSaREotirFzJ#P36ti2uaaRvfgdF57RsAVKdL" +
+		"kV$i6Mb$KB5cd7VsdyYN#gSyoBsyqgPk$4AUd3sJHxcJMxcXVP1tkPOhUPEPV7D1nkePrj4" +
+		"ZXhNqY65LVU8fnbKnOTLo0YLaLOsZLI9Lib#1FrnC");
 
 	public TVMParser() {
 		super(PARSING_TABLES);
@@ -46,14 +47,14 @@ public class TVMParser extends Parser {
 			
 			return s;
 			}
-			case 5: // Statement = LOAD Container.c COMMA Source.s
+			case 5: // Statement = SET Container.c COMMA Source.s
 			{
 					final Symbol _symbol_c = _symbols[offset + 2];
 					final Operand c = (Operand) _symbol_c.value;
 					final Symbol _symbol_s = _symbols[offset + 4];
 					final Operand s = (Operand) _symbol_s.value;
 					
-			return new Instruction(Opcode.LOAD, c, s);
+			return new Instruction(Opcode.SET, c, s);
 			}
 			case 6: // Statement = INC Container.c
 			{
@@ -74,53 +75,57 @@ public class TVMParser extends Parser {
 					
 			return new Instruction(Opcode.BRK);
 			}
-			case 9: // Container = ADDRESS.a
+			case 9: // Container = Location.l
 			{
-					final Symbol _symbol_a = _symbols[offset + 1];
-					final String a = (String) _symbol_a.value;
+					final Symbol _symbol_l = _symbols[offset + 1];
+					final String l = (String) _symbol_l.value;
 					
-			return new Operand(OperandType.ADDRESS, a);
+			return new Operand(OperandType.ADDRESS, l);
 			}
-			case 10: // Container = ADDRESS.a PLUS REGISTER.r
+			case 10: // Container = Location.l PLUS REGISTER.r
 			{
-					final Symbol _symbol_a = _symbols[offset + 1];
-					final String a = (String) _symbol_a.value;
+					final Symbol _symbol_l = _symbols[offset + 1];
+					final String l = (String) _symbol_l.value;
 					final Symbol _symbol_r = _symbols[offset + 3];
 					final String r = (String) _symbol_r.value;
 					
-			return new Operand(OperandType.ADDRESS_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDEXED, l, r);
 			}
-			case 11: // Container = LBRACKET ADDRESS.a RBRACKET
+			case 11: // Container = LBRACKET Location.l RBRACKET
 			{
-					final Symbol _symbol_a = _symbols[offset + 2];
-					final String a = (String) _symbol_a.value;
+					final Symbol _symbol_l = _symbols[offset + 2];
+					final String l = (String) _symbol_l.value;
 					
-			return new Operand(OperandType.ADDRESS_INDIRECT, a);
+			return new Operand(OperandType.ADDRESS_INDIRECT, l);
 			}
-			case 12: // Container = LBRACKET ADDRESS.a PLUS REGISTER.r RBRACKET
+			case 12: // Container = LBRACKET Location.l PLUS REGISTER.r RBRACKET
 			{
-					final Symbol _symbol_a = _symbols[offset + 2];
-					final String a = (String) _symbol_a.value;
+					final Symbol _symbol_l = _symbols[offset + 2];
+					final String l = (String) _symbol_l.value;
 					final Symbol _symbol_r = _symbols[offset + 4];
 					final String r = (String) _symbol_r.value;
 					
-			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, l, r);
 			}
-			case 13: // Container = LBRACKET ADDRESS.a RBRACKET PLUS REGISTER.r
+			case 13: // Container = LBRACKET Location.l RBRACKET PLUS REGISTER.r
 			{
-					final Symbol _symbol_a = _symbols[offset + 2];
-					final String a = (String) _symbol_a.value;
+					final Symbol _symbol_l = _symbols[offset + 2];
+					final String l = (String) _symbol_l.value;
 					final Symbol _symbol_r = _symbols[offset + 5];
 					final String r = (String) _symbol_r.value;
 					
-			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, a, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, l, r);
 			}
-			case 14: // Container = REGISTER.r
+			case 14: // Container = LBRACKET Location.l PLUS REGISTER.r1 RBRACKET PLUS REGISTER.r2
 			{
-					final Symbol _symbol_r = _symbols[offset + 1];
-					final String r = (String) _symbol_r.value;
+					final Symbol _symbol_l = _symbols[offset + 2];
+					final String l = (String) _symbol_l.value;
+					final Symbol _symbol_r1 = _symbols[offset + 4];
+					final String r1 = (String) _symbol_r1.value;
+					final Symbol _symbol_r2 = _symbols[offset + 7];
+					final String r2 = (String) _symbol_r2.value;
 					
-			return new Operand(OperandType.REGISTER, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, r1, r2);
 			}
 			case 16: // Source = NUMBER.n
 			{
@@ -129,14 +134,14 @@ public class TVMParser extends Parser {
 					
 			return new Operand(OperandType.NUMBER, n);
 			}
-			case 17: // Destination = ADDRESS.a
+			case 20: // Destination = ADDRESS.a
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final String a = (String) _symbol_a.value;
 					
 			return new Operand(OperandType.ADDRESS, a);
 			}
-			case 18: // Destination = IDENTIFIER.i
+			case 21: // Destination = IDENTIFIER.i
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final String i = (String) _symbol_i.value;
@@ -146,6 +151,9 @@ public class TVMParser extends Parser {
 			case 0: // Grammar = Statements
 			case 4: // StatementWithLabel = Statement
 			case 15: // Source = Container
+			case 17: // Location = ADDRESS
+			case 18: // Location = IDENTIFIER
+			case 19: // Location = REGISTER
 			{
 				return _symbols[offset + 1];
 			}

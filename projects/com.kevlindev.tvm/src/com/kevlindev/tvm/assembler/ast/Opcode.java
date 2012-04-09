@@ -3,7 +3,7 @@ package com.kevlindev.tvm.assembler.ast;
 public enum Opcode {
 	// @formatter:off
 	BRK(0),
-	LOAD(2),
+	SET(2),
 	INC(1),
 	BNE(1);
 	// @formatter:on
