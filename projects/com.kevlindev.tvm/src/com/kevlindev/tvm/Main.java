@@ -59,9 +59,9 @@ public class Main {
 			}
 
 			// get bytes
-			String byte1 = String.format("; %02X", instruction.opcode.ordinal());
-			String byte2 = "  ";
-			String byte3 = "  ";
+			String byte1 = String.format("; %04X", instruction.opcode.ordinal());
+			String byte2 = " ";
+			String byte3 = " ";
 
 			// add row
 			table.addRow("", opcode, operands, byte1, byte2, byte3);

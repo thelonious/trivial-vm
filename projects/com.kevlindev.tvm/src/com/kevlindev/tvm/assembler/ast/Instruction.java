@@ -33,10 +33,18 @@ public class Instruction extends Symbol {
 		this.label = label;
 	}
 
-	public List<Byte> getBytes() {
-		List<Byte> result = new ArrayList<Byte>();
+	public List<Short> getShorts() {
+		List<Short> result = new ArrayList<Short>();
 
-		result.add((byte) opcode.getOpcode());
+		result.add((short) opcode.getOpcode());
+		
+		if (operand1 != null) {
+			// add operand values
+		}
+		
+		if (operand2 != null) {
+			// add operand values
+		}
 
 		return result;
 	}

@@ -76,8 +76,12 @@ Label = ":" {Identifier}
 	{Comment}		{ /* ignore */ }
 	
 	","				{ return newToken(TVMTokenType.COMMA,		yytext()); }
+	"+"				{ return newToken(TVMTokenType.PLUS,		yytext()); }
+	"["				{ return newToken(TVMTokenType.LBRACKET,	yytext()); }
+	"]"				{ return newToken(TVMTokenType.RBRACKET,	yytext()); }
 	[rR][0-9]		{ return newToken(TVMTokenType.REGISTER,	yytext()); }
-	#[0-9]+			{ return newToken(TVMTokenType.NUMBER,		yytext()); }
+	"#"[0-9]+		{ return newToken(TVMTokenType.NUMBER,		yytext()); }
+	"$"[0-9]+		{ return newToken(TVMTokenType.ADDRESS,		yytext()); }
 	
 	"BRK"			{ return newToken(TVMTokenType.BRK,			yytext()); }
 	"BNE"			{ return newToken(TVMTokenType.BNE,			yytext()); }

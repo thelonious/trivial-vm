@@ -1,16 +1,20 @@
 // java -jar beaver.jar -T -w tvm-assembler.grammar
 %package "com.kevlindev.tvm.assembler";
 
-%import "com.kevlindev.tvm.ast.*";
+%import "com.kevlindev.tvm.assembler.ast.Instruction";
+%import "com.kevlindev.tvm.assembler.ast.Opcode";
+%import "com.kevlindev.tvm.assembler.ast.Operand";
+%import "com.kevlindev.tvm.assembler.ast.OperandType";
 
 %class "TVMParser";
 
 %terminals BRK, LOAD, INC, BNE;
-%terminals REGISTER, NUMBER, LABEL, IDENTIFIER;
-%terminals COMMA;
+%terminals ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER;
+%terminals COMMA, LBRACKET, RBRACKET, PLUS;
 
 %typeof Statement = "Instruction";
-%typeof REGISTER, NUMBER, LABEL, IDENTIFIER = "String";
+%typeof Container, Source, Destination = "Operand";
+%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER = "String";
 
 %goal Grammar;
 
@@ -34,20 +38,66 @@ StatementWithLabel
 	;
 
 Statement
-	=	LOAD REGISTER.r COMMA NUMBER.n
+	=	LOAD Container.c COMMA Source.s
 		{:
-			return new Instruction(Opcode.LOAD, new Operand(OperandType.REGISTER, r), new Operand(OperandType.NUMBER, n));
+			return new Instruction(Opcode.LOAD, c, s);
 		:}
-	|	INC REGISTER.r
+	|	INC Container.c
 		{:
-			return new Instruction(Opcode.INC, new Operand(OperandType.REGISTER, r));
+			return new Instruction(Opcode.INC, c);
 		:}
-	|	BNE IDENTIFIER.i
+	|	BNE Destination.d
 		{:
-			return new Instruction(Opcode.BNE, new Operand(OperandType.LABEL, i));
+			return new Instruction(Opcode.BNE, d);
 		:}
 	|	BRK
 		{:
 			return new Instruction(Opcode.BRK);
+		:}
+	;
+
+Container
+	=	ADDRESS.a
+		{:
+			return new Operand(OperandType.ADDRESS, a);
+		:}
+	|	ADDRESS.a PLUS REGISTER.r
+		{:
+			return new Operand(OperandType.ADDRESS_INDEXED, a, r);
+		:}
+	|	LBRACKET ADDRESS.a RBRACKET
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT, a);
+		:}
+	|	LBRACKET ADDRESS.a PLUS REGISTER.r RBRACKET
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, a, r);
+		:}
+	|	LBRACKET ADDRESS.a RBRACKET PLUS REGISTER.r
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, a, r);
+		:}
+	|	REGISTER.r
+		{:
+			return new Operand(OperandType.REGISTER, r);
+		:}
+	;
+
+Source
+	=	Container
+	|	NUMBER.n
+		{:
+			return new Operand(OperandType.NUMBER, n);
+		:}
+	;
+
+Destination
+	=	ADDRESS.a
+		{:
+			return new Operand(OperandType.ADDRESS, a);
+		:}
+	|	IDENTIFIER.i
+		{:
+			return new Operand(OperandType.LABEL, i);
 		:}
 	;

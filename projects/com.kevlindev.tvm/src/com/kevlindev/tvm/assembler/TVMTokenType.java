@@ -9,15 +9,22 @@ public enum TVMTokenType {
 	ERROR((short) -2),
 	UNDEFINED((short) -1),
 	EOF(Terminals.EOF),
+	
+	LBRACKET(Terminals.LBRACKET),
+	RBRACKET(Terminals.RBRACKET),
+	PLUS(Terminals.PLUS),
 	COMMA(Terminals.COMMA),
+	
+	ADDRESS(Terminals.ADDRESS),
+	REGISTER(Terminals.REGISTER),
+	LABEL(Terminals.LABEL),
+	NUMBER(Terminals.NUMBER),
+	IDENTIFIER(Terminals.IDENTIFIER),
+	
 	BRK(Terminals.BRK),
 	LOAD(Terminals.LOAD),
 	INC(Terminals.INC),
-	BNE(Terminals.BNE),
-	REGISTER(Terminals.REGISTER),
-	NUMBER(Terminals.NUMBER),
-	LABEL(Terminals.LABEL),
-	IDENTIFIER(Terminals.IDENTIFIER);
+	BNE(Terminals.BNE);
 	// @formatter:on
 
 	private static final Map<Short, TVMTokenType> SYMBOL_ID_MAP;
