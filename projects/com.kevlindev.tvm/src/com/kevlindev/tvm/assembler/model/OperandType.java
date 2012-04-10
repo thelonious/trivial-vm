@@ -1,4 +1,8 @@
-package com.kevlindev.tvm.assembler.ast;
+package com.kevlindev.tvm.assembler.model;
+
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum OperandType {
 	// @formatter:off
@@ -22,6 +26,24 @@ public enum OperandType {
 	REGISTER_INDIRECT_PRE_AND_POST_INDEXED(14);
 	
 	// @formatter:on
+	private static final Map<Integer, OperandType> typeMap;
+	static {
+		typeMap = new HashMap<Integer, OperandType>();
+
+		for (OperandType type : EnumSet.allOf(OperandType.class)) {
+			typeMap.put(type.getIndex(), type);
+		}
+	}
+
+	public static OperandType getOperandType(int value) {
+		OperandType result = NONE;
+
+		if (typeMap.containsKey(value)) {
+			result = typeMap.get(value);
+		}
+
+		return result;
+	}
 
 	private int index;
 

@@ -85,6 +85,7 @@ Label = ":" {Identifier}
 	
 	"BRK"			{ return newToken(TVMTokenType.BRK,			yytext()); }
 	"INC"			{ return newToken(TVMTokenType.INC,			yytext()); }
+	"JEQ"			{ return newToken(TVMTokenType.JEQ,			yytext()); }
 	"JNE"			{ return newToken(TVMTokenType.JNE,			yytext()); }
 	"SET"			{ return newToken(TVMTokenType.SET,			yytext()); }
 	

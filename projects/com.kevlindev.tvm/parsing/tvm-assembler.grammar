@@ -1,6 +1,7 @@
 // java -jar beaver.jar -T -w tvm-assembler.grammar
 %package "com.kevlindev.tvm.assembler";
 
+%import "java.io.IOException";
 %import "java.util.HashMap";
 %import "java.util.Map";
 
@@ -12,18 +13,12 @@
 %import "com.kevlindev.tvm.assembler.ast.Opcode";
 %import "com.kevlindev.tvm.assembler.ast.Operand";
 %import "com.kevlindev.tvm.assembler.ast.OperandType";
+%import "com.kevlindev.tvm.assembler.ast.Program";
 %import "com.kevlindev.tvm.assembler.ast.Register";
 
 %class "TVMParser";
 
 %embed {:
-	private Map<String, BaseNode> symbols = new HashMap<String, BaseNode>();
-
-	private void addSymbol(String symbol, BaseNode node) {
-		// TODO: check for existing symbol
-		symbols.put(symbol, node);
-	}
-
 	private Address createAddress(String text) {
 		return new Address(Integer.parseInt(text.substring(1)));
 	}
@@ -32,12 +27,26 @@
 		return new Register(Integer.parseInt(text.substring(1)));
 	}
 
-	public Map<String, BaseNode> getSymbols() {
-		return symbols;
+	public Program parse(String source) {
+		TVMLexer lexer = new TVMLexer();
+
+		lexer.setSource(source);
+
+		Object result = null;
+
+		try {
+			result = parse(lexer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (result instanceof Program) ? (Program) result : null;
 	}
 :};
 
-%terminals BRK, SET, INC, JNE;
+%terminals BRK, SET, INC, JEQ, JNE;
 %terminals ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER;
 %terminals COMMA, LBRACKET, RBRACKET, PLUS;
 
@@ -49,7 +58,10 @@
 %goal Grammar;
 
 Grammar
-	=	Statements
+	=	Statements.s
+		{:
+			return new Program(_list_s);
+		:}
 	;
 
 Statements
@@ -60,11 +72,8 @@ Statements
 StatementWithLabel
 	=	LABEL.l Statement.s
 		{:
-			addSymbol(l, s);
+			s.setLabel(l.substring(1));
 
-			// TODO: remove once symbol table is working
-			s.setLabel(l);
-			
 			return s;
 		:}
 	|	Statement
@@ -78,6 +87,10 @@ Statement
 	|	INC Container.c
 		{:
 			return new Instruction(Opcode.INC, c);
+		:}
+	|	JEQ Destination.d
+		{:
+			return new Instruction(Opcode.JEQ, d);
 		:}
 	|	JNE Destination.d
 		{:

@@ -3,5 +3,7 @@
 	SET	r1, #1
 :advance
 	INC	r1
-	JNE	advance
+	JEQ	stop	; using two jmps to test forward
+	JNE	advance	; and backward label resolution
+:stop
 	BRK

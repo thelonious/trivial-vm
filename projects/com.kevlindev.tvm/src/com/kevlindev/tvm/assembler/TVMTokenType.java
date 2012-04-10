@@ -24,6 +24,7 @@ public enum TVMTokenType {
 	BRK(Terminals.BRK),
 	SET(Terminals.SET),
 	INC(Terminals.INC),
+	JEQ(Terminals.JEQ),
 	JNE(Terminals.JNE);
 	// @formatter:on
 

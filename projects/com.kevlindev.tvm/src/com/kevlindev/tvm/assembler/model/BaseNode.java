@@ -1,4 +1,4 @@
-package com.kevlindev.tvm.assembler.ast;
+package com.kevlindev.tvm.assembler.model;
 
 import beaver.Symbol;
 
