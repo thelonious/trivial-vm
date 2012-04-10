@@ -3,12 +3,14 @@ package com.kevlindev.tvm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import beaver.Parser.Exception;
 
 import com.kevlindev.text.Table;
 import com.kevlindev.tvm.assembler.TVMLexer;
 import com.kevlindev.tvm.assembler.TVMParser;
+import com.kevlindev.tvm.assembler.ast.BaseNode;
 import com.kevlindev.tvm.assembler.ast.Instruction;
 import com.kevlindev.tvm.assembler.ast.Operand;
 import com.kevlindev.utils.IOUtils;
@@ -33,7 +35,19 @@ public class Main {
 				lexer.setSource(source);
 				Object result = parser.parse(lexer);
 
+				// print source
 				printResult((List<Instruction>) result);
+
+				// print symbols
+				System.out.println();
+				System.out.println("Symbols");
+				System.out.println("=======");
+
+				Map<String, BaseNode> symbols = parser.getSymbols();
+
+				for (Map.Entry<String, BaseNode> entry : symbols.entrySet()) {
+					System.out.println(entry.getKey() + ": " + entry.getValue());
+				}
 			}
 		} else {
 			System.out.println("usage: tvm-assembler <tvm-file>");

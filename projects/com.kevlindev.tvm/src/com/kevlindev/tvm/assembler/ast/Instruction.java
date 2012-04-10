@@ -26,6 +26,78 @@ public class Instruction extends BaseNode {
 	}
 
 	/**
+	 * getByteCode
+	 * 
+	 * @return
+	 */
+	public List<Short> getByteCode() {
+		List<Short> result = new ArrayList<Short>();
+
+		// get opcode
+		int word1 = opcode.getOpcode();
+
+		// get operand codes
+		int opand1 = getOpand(0);
+		int opand2 = getOpand(1);
+
+		// munge in operand types
+		word1 = ((opand1 & 0x0F) << 12) | ((opand2 & 0x0F) << 8) | (word1 & 0xFF);
+
+		// emit word1
+		result.add((short) word1);
+
+		// emit register code word
+		int regCode1 = getRegisterCode(0);
+		int regCode2 = getRegisterCode(1);
+
+		if (regCode1 != -1 || regCode2 != -1) {
+			if (regCode1 == -1) {
+				regCode1 = 0;
+			}
+			if (regCode2 == -1) {
+				regCode2 = 0;
+			}
+
+			int regCodeWord = ((regCode1 & 0xFF) << 8) | (regCode2 & 0xFF);
+
+			result.add((short) regCodeWord);
+		}
+
+		// emit operand words
+		int opandData1 = getData(0);
+		int opandData2 = getData(1);
+
+		if (opandData1 != -1) {
+			result.add((short) opandData1);
+		}
+		if (opandData2 != -1) {
+			result.add((short) opandData2);
+		}
+
+		return result;
+	}
+
+	private int getData(int index) {
+		Operand operand = getOperand(index);
+		int result = -1;
+
+		if (operand != null) {
+			BaseNode value = operand.value1;
+
+			if (value instanceof Number) {
+				result = ((Number) value).getNumber();
+			} else if (value instanceof Address) {
+				result = ((Address) value).getAddress();
+			} else if (value instanceof Identifier) {
+				// TODO: lookup identifier value in symbol table
+				result = 0;
+			}
+		}
+
+		return result;
+	}
+
+	/**
 	 * getLabel
 	 * 
 	 * @return
@@ -49,6 +121,12 @@ public class Instruction extends BaseNode {
 		return opcode;
 	}
 
+	/**
+	 * getOperand
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public Operand getOperand(int index) {
 		Operand result = null;
 
@@ -59,33 +137,16 @@ public class Instruction extends BaseNode {
 		return result;
 	}
 
-	/**
-	 * getByteCode
-	 * 
-	 * @return
-	 */
-	public List<Short> getByteCode() {
-		List<Short> result = new ArrayList<Short>();
+	private int getRegisterCode(int index) {
+		Operand operand = getOperand(index);
+		int result = -1;
 
-		// get opcode
-		int word1 = opcode.getOpcode();
+		if (operand != null) {
+			// TODO: handle value2, and value3
+			if (operand.value1 instanceof Register) {
+				Register register = (Register) operand.value1;
 
-		// get operand codes
-		int opand1 = getOpand(0);
-		int opand2 = getOpand(1);
-
-		// munge in operand types
-		word1 = ((opand1 & 0x0F) << 12) | ((opand2 & 0x0F) << 8) | ((word1 & 0xFF));
-
-		// emit word1
-		result.add((short) word1);
-
-		// emit operand words
-		if (opand1 != 0) {
-			result.add((short) 0); // TODO: emit actual value
-
-			if (opand2 != 0) {
-				result.add((short) 0); // TODO: emit actual value
+				result = register.getIndex();
 			}
 		}
 

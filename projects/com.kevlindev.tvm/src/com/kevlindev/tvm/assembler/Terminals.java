@@ -14,7 +14,7 @@ public class Terminals {
 	static public final short LBRACKET = 6;
 	static public final short SET = 7;
 	static public final short INC = 8;
-	static public final short BNE = 9;
+	static public final short JNE = 9;
 	static public final short BRK = 10;
 	static public final short LABEL = 11;
 	static public final short COMMA = 12;

@@ -24,7 +24,7 @@ public enum TVMTokenType {
 	BRK(Terminals.BRK),
 	SET(Terminals.SET),
 	INC(Terminals.INC),
-	BNE(Terminals.BNE);
+	JNE(Terminals.JNE);
 	// @formatter:on
 
 	private static final Map<Short, TVMTokenType> SYMBOL_ID_MAP;

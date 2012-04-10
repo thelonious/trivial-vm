@@ -1,20 +1,50 @@
 // java -jar beaver.jar -T -w tvm-assembler.grammar
 %package "com.kevlindev.tvm.assembler";
 
+%import "java.util.HashMap";
+%import "java.util.Map";
+
+%import "com.kevlindev.tvm.assembler.ast.Address";
+%import "com.kevlindev.tvm.assembler.ast.BaseNode";
+%import "com.kevlindev.tvm.assembler.ast.Identifier";
 %import "com.kevlindev.tvm.assembler.ast.Instruction";
+%import "com.kevlindev.tvm.assembler.ast.Number";
 %import "com.kevlindev.tvm.assembler.ast.Opcode";
 %import "com.kevlindev.tvm.assembler.ast.Operand";
 %import "com.kevlindev.tvm.assembler.ast.OperandType";
+%import "com.kevlindev.tvm.assembler.ast.Register";
 
 %class "TVMParser";
 
-%terminals BRK, SET, INC, BNE;
+%embed {:
+	private Map<String, BaseNode> symbols = new HashMap<String, BaseNode>();
+
+	private void addSymbol(String symbol, BaseNode node) {
+		// TODO: check for existing symbol
+		symbols.put(symbol, node);
+	}
+
+	private Address createAddress(String text) {
+		return new Address(Integer.parseInt(text.substring(1)));
+	}
+
+	private Register createRegister(String text) {
+		return new Register(Integer.parseInt(text.substring(1)));
+	}
+
+	public Map<String, BaseNode> getSymbols() {
+		return symbols;
+	}
+:};
+
+%terminals BRK, SET, INC, JNE;
 %terminals ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER;
 %terminals COMMA, LBRACKET, RBRACKET, PLUS;
 
 %typeof Statement = "Instruction";
 %typeof Container, Source, Destination = "Operand";
-%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER, Location = "String";
+%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER = "String";
+%typeof Location = "BaseNode";
 
 %goal Grammar;
 
@@ -30,6 +60,9 @@ Statements
 StatementWithLabel
 	=	LABEL.l Statement.s
 		{:
+			addSymbol(l, s);
+
+			// TODO: remove once symbol table is working
 			s.setLabel(l);
 			
 			return s;
@@ -46,9 +79,9 @@ Statement
 		{:
 			return new Instruction(Opcode.INC, c);
 		:}
-	|	BNE Destination.d
+	|	JNE Destination.d
 		{:
-			return new Instruction(Opcode.BNE, d);
+			return new Instruction(Opcode.JNE, d);
 		:}
 	|	BRK
 		{:
@@ -63,7 +96,7 @@ Container
 		:}
 	|	Location.l PLUS REGISTER.r
 		{:
-			return new Operand(OperandType.ADDRESS_INDEXED, l, r);
+			return new Operand(OperandType.ADDRESS_INDEXED, l, createRegister(r));
 		:}
 	|	LBRACKET Location.l RBRACKET
 		{:
@@ -71,36 +104,36 @@ Container
 		:}
 	|	LBRACKET Location.l PLUS REGISTER.r RBRACKET
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, l, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, l, createRegister(r));
 		:}
 	|	LBRACKET Location.l RBRACKET PLUS REGISTER.r
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, l, r);
+			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, l, createRegister(r));
 		:}
 	|	LBRACKET Location.l PLUS REGISTER.r1 RBRACKET PLUS REGISTER.r2
 		{:
-			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, r1, r2);
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, createRegister(r1), createRegister(r2));
 		:}
 
 	|	REGISTER.r
 		{:
-			return new Operand(OperandType.REGISTER, r);
+			return new Operand(OperandType.REGISTER, createRegister(r));
 		:}
 	|	LBRACKET REGISTER.r RBRACKET
 		{:
-			return new Operand(OperandType.REGISTER_INDIRECT, r);
+			return new Operand(OperandType.REGISTER_INDIRECT, createRegister(r));
 		:}
 	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET
 		{:
-			return new Operand(OperandType.REGISTER_INDIRECT_PRE_INDEXED, r1, r2);
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_INDEXED, createRegister(r1), createRegister(r2));
 		:}
 	|	LBRACKET REGISTER.r1 RBRACKET PLUS REGISTER.r2
 		{:
-			return new Operand(OperandType.REGISTER_INDIRECT_POST_INDEXED, r1, r2);
+			return new Operand(OperandType.REGISTER_INDIRECT_POST_INDEXED, createRegister(r1), createRegister(r2));
 		:}
 	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET PLUS REGISTER.r3
 		{:
-			return new Operand(OperandType.REGISTER_INDIRECT_PRE_AND_POST_INDEXED, r1, r2, r3);
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_AND_POST_INDEXED, createRegister(r1), createRegister(r2), createRegister(r3));
 		:}
 	;
 
@@ -108,22 +141,28 @@ Source
 	=	Container
 	|	NUMBER.n
 		{:
-			return new Operand(OperandType.NUMBER, n);
+			return new Operand(OperandType.NUMBER, new Number(Integer.parseInt(n.substring(1))));
 		:}
 	;
 
 Location
-	=	ADDRESS
-	|	IDENTIFIER
+	=	ADDRESS.a
+		{:
+			return createAddress(a);
+		:}
+	|	IDENTIFIER.i
+		{:
+			return new Identifier(i);
+		:}
 	;
 
 Destination
 	=	ADDRESS.a
 		{:
-			return new Operand(OperandType.ADDRESS, a);
+			return new Operand(OperandType.ADDRESS, createAddress(a));
 		:}
 	|	IDENTIFIER.i
 		{:
-			return new Operand(OperandType.LABEL, i);
+			return new Operand(OperandType.LABEL, new Identifier(i));
 		:}
 	;

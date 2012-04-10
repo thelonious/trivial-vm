@@ -2,19 +2,19 @@ package com.kevlindev.tvm.assembler.ast;
 
 public class Operand extends BaseNode {
 	public final OperandType type;
-	public final Object value1;
-	public final Object value2;
-	public final Object value3;
+	public final BaseNode value1;
+	public final BaseNode value2;
+	public final BaseNode value3;
 
-	public Operand(OperandType type, Object value) {
+	public Operand(OperandType type, BaseNode value) {
 		this(type, value, null, null);
 	}
 
-	public Operand(OperandType type, Object value1, Object value2) {
+	public Operand(OperandType type, BaseNode value1, BaseNode value2) {
 		this(type, value1, value2, null);
 	}
 
-	public Operand(OperandType type, Object value1, Object value2, Object value3) {
+	public Operand(OperandType type, BaseNode value1, BaseNode value2, BaseNode value3) {
 		this.type = type;
 		this.value1 = value1;
 		this.value2 = value2;

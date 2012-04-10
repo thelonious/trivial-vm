@@ -1,24 +1,24 @@
 ; An example of each of the addressing modes
 
 :address
-	SET	$0001,				#0
-	SET	$0001 + r2,			#0
-	SET	[$0001],			#0
-	SET	[$0001 + r2],		#0
-	SET	[$0001] + r2,		#0
-	SET	[$0001 + r2] + r3,	#0
+	SET	$0003,				#1
+	SET	$0003 + r2,			#1
+	SET	[$0003],			#1
+	SET	[$0003 + r2],		#1
+	SET	[$0003] + r2,		#1
+	SET	[$0003 + r2] + r3,	#1
 
 :data
-	SET	data,				#0
-	SET	data + r3,			#0
-	SET	[data],				#0
-	SET	[data + r3],		#0
-	SET	[data] + r3,		#0
-	SET	[data + r3] + r4,	#0
+	SET	data,				#1
+	SET	data + r3,			#1
+	SET	[data],				#1
+	SET	[data + r3],		#1
+	SET	[data] + r3,		#1
+	SET	[data + r3] + r4,	#1
 
 :register
-	SET	r2,					#0
-	SET	[r2],				#0
-	SET	[r2 + r3],			#0
-	SET	[r2] + r3,			#0
-	SET	[r2 + r3] + r4,		#0
+	SET	r2,					#1
+	SET	[r2],				#1
+	SET	[r2 + r3],			#1
+	SET	[r2] + r3,			#1
+	SET	[r2 + r3] + r4,		#1
