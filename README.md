@@ -1,9 +1,3 @@
-Just playing around with a very simple virtual CPU along with a toy language that targets it.
+Just playing around with a very simple virtual CPU along with toy languages that target it. Really, nothing original here. I'm doing this for my own edification.
 
-This is being built in Eclipse. You'll need to pull in all projects in the projects directory along with projects from the following repos:
-
-* [beaver](https://github.com/thelonious/beaver)
-* [jflex](https://github.com/thelonious/jflex)
-* [java-utils](https://github.com/thelonious/java-utils)
-
-These are all my own repos, so they should always be in sync with this project.
+This is being written in Java (JDK 6) and as such uses Eclipse. If you want to develop in that environment, then you'll need to load your workspace with all projects from the projects directory along with the projects from the [java-utils](https://github.com/thelonious/java-utils) repository.
