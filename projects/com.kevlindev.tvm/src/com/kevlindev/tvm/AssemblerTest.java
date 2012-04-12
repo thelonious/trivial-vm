@@ -1,5 +1,6 @@
 package com.kevlindev.tvm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -7,6 +8,7 @@ import beaver.Parser.Exception;
 
 import com.kevlindev.tvm.assembler.TVMParser;
 import com.kevlindev.tvm.assembler.model.Program;
+import com.kevlindev.tvm.io.FileUtil;
 import com.kevlindev.tvm.io.TVMFileWriter;
 import com.kevlindev.utils.IOUtils;
 
@@ -64,8 +66,18 @@ public class AssemblerTest {
 				if (program != null) {
 					tester.showListing(program);
 					tester.showSymbolListing(program);
-					TVMFileWriter.writeBinFile(program, file);
-					TVMFileWriter.writeSymFile(program, file);
+
+					// write bin file
+					File binFile = new File(FileUtil.setExtension(file, FileUtil.BIN_EXTENSION));
+					TVMFileWriter.writeBinFile(program, binFile);
+
+					// write sym file
+					File symFile = new File(FileUtil.setExtension(file, FileUtil.SYM_EXTENSION));
+					TVMFileWriter.writeSymFile(program, symFile);
+
+					// write lst file
+					File lstFile = new File(FileUtil.setExtension(file, FileUtil.LST_EXTENSION));
+					TVMFileWriter.writeListing(program, lstFile);
 				}
 			}
 		} else {

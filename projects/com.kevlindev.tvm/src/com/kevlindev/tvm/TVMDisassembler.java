@@ -8,12 +8,12 @@ import com.kevlindev.tvm.assembler.model.Opcode;
 import com.kevlindev.tvm.assembler.model.OperandType;
 import com.kevlindev.utils.StringUtils;
 
-public class TrivialVirtualMachine {
+public class TVMDisassembler {
 	private List<Short> memory;
 	private Map<Short, String> symbols;
 	private int programCounter;
 
-	public TrivialVirtualMachine(List<Short> memory, Map<Short, String> symbols) {
+	public TVMDisassembler(List<Short> memory, Map<Short, String> symbols) {
 		this.memory = memory;
 		this.symbols = symbols;
 	}
@@ -32,36 +32,9 @@ public class TrivialVirtualMachine {
 			OperandType opandType1 = OperandType.getOperandType((current & 0xF000) >> 12);
 			OperandType opandType2 = OperandType.getOperandType((current & 0x0F00) >> 8);
 			Opcode opcode = Opcode.getOpcode(current & 0x00FF);
-
-			switch (opcode) {
-				case SET:
-					System.out.print("    SET ");
-					printOperands(opandType1, opandType2);
-					break;
-
-				case INC:
-					System.out.print("    INC ");
-					printOperands(opandType1, opandType2);
-					break;
-
-				case JEQ:
-					System.out.print("    JEQ ");
-					printOperands(opandType1, opandType2);
-					break;
-
-				case JNE:
-					System.out.print("    JNE ");
-					printOperands(opandType1, opandType2);
-					break;
-
-				case BRK:
-					System.out.println("    BRK");
-					printOperands(opandType1, opandType2);
-					break;
-
-				default:
-					break;
-			}
+			
+			System.out.print("    " + opcode + " ");
+			printOperands(opandType1, opandType2);
 		}
 	}
 
