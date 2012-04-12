@@ -8,13 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import com.kevlindev.tvm.Constants;
 import com.kevlindev.tvm.assembler.model.Program;
 
 public class TVMFileWriter {
-	public static final short SIGNATURE = (short) 0xABCD;
-	public static final short BIN_VERSION = 1;
-	public static final short SYM_VERSION = 1;
-
 	public static void writeBinFile(Program program, File binFile) throws IOException {
 		// write binary file
 		FileOutputStream fos = new FileOutputStream(binFile);
@@ -22,10 +19,10 @@ public class TVMFileWriter {
 		DataOutputStream dos = new DataOutputStream(bos);
 
 		// write signature
-		dos.writeShort(SIGNATURE);
+		dos.writeShort(Constants.SIGNATURE);
 
 		// write version number
-		dos.writeShort(BIN_VERSION);
+		dos.writeShort(Constants.BIN_VERSION);
 
 		// write byteCode starting address and size
 		List<Short> byteCodes = program.getByteCode();
@@ -54,10 +51,10 @@ public class TVMFileWriter {
 		DataOutputStream dos = new DataOutputStream(bos);
 
 		// write signature
-		dos.writeShort(SIGNATURE);
+		dos.writeShort(Constants.SIGNATURE);
 
 		// write version number
-		dos.writeShort(BIN_VERSION);
+		dos.writeShort(Constants.BIN_VERSION);
 
 		// write symbols
 		for (String symbol : program.getSymbols()) {

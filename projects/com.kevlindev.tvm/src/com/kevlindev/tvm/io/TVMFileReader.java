@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.kevlindev.tvm.Constants;
+
 public class TVMFileReader {
 	public static List<Short> loadByteCode(File file) throws IOException {
 		List<Short> result;
@@ -21,10 +23,10 @@ public class TVMFileReader {
 
 			try {
 				short signature = dis.readShort();
-				assert (signature == TVMFileWriter.SIGNATURE);
+				assert (signature == Constants.SIGNATURE);
 
 				short version = dis.readShort();
-				assert (version == TVMFileWriter.BIN_VERSION);
+				assert (version == Constants.BIN_VERSION);
 
 				while (true) {
 					short address = dis.readShort();
@@ -56,10 +58,10 @@ public class TVMFileReader {
 
 			try {
 				short signature = dis.readShort();
-				assert (signature == TVMFileWriter.SIGNATURE);
+				assert (signature == Constants.SIGNATURE);
 
 				short version = dis.readShort();
-				assert (version == TVMFileWriter.BIN_VERSION);
+				assert (version == Constants.BIN_VERSION);
 
 				while (true) {
 					String name = dis.readUTF();
