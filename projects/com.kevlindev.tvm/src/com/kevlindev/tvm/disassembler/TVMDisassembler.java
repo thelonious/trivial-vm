@@ -1,11 +1,11 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.disassembler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.kevlindev.tvm.assembler.model.Opcode;
-import com.kevlindev.tvm.assembler.model.OperandType;
+import com.kevlindev.tvm.Opcode;
+import com.kevlindev.tvm.OperandType;
 import com.kevlindev.utils.StringUtils;
 
 public class TVMDisassembler {
@@ -32,7 +32,7 @@ public class TVMDisassembler {
 			OperandType opandType1 = OperandType.getOperandType((current & 0xF000) >> 12);
 			OperandType opandType2 = OperandType.getOperandType((current & 0x0F00) >> 8);
 			Opcode opcode = Opcode.getOpcode(current & 0x00FF);
-			
+
 			System.out.print("    " + opcode + " ");
 			printOperands(opandType1, opandType2);
 		}

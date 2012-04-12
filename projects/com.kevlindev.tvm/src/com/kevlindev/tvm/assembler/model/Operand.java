@@ -1,5 +1,7 @@
 package com.kevlindev.tvm.assembler.model;
 
+import com.kevlindev.tvm.OperandType;
+
 public class Operand extends BaseNode {
 	public final OperandType type;
 	public final BaseNode value1;

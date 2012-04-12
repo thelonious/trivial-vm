@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.kevlindev.tvm.disassembler.TVMDisassembler;
 import com.kevlindev.tvm.io.FileUtil;
 import com.kevlindev.tvm.io.TVMFileReader;
 import com.kevlindev.utils.ArrayUtils;

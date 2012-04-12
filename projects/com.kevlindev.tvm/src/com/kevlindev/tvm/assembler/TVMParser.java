@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import beaver.*;
 
+import com.kevlindev.tvm.Opcode;
+import com.kevlindev.tvm.OperandType;
 import com.kevlindev.tvm.assembler.model.Address;
 import com.kevlindev.tvm.assembler.model.BaseNode;
 import com.kevlindev.tvm.assembler.model.Identifier;
 import com.kevlindev.tvm.assembler.model.Instruction;
 import com.kevlindev.tvm.assembler.model.Number;
-import com.kevlindev.tvm.assembler.model.Opcode;
 import com.kevlindev.tvm.assembler.model.Operand;
-import com.kevlindev.tvm.assembler.model.OperandType;
 import com.kevlindev.tvm.assembler.model.Program;
 import com.kevlindev.tvm.assembler.model.Register;
 

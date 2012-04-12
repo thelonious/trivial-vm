@@ -3,6 +3,7 @@ package com.kevlindev.tvm.assembler.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kevlindev.tvm.Opcode;
 import com.kevlindev.utils.ArrayUtils;
 import com.kevlindev.utils.CollectionUtils;
 
