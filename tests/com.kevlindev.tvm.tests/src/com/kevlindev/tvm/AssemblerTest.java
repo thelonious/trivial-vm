@@ -8,8 +8,8 @@ import beaver.Parser.Exception;
 
 import com.kevlindev.tvm.assembler.TVMParser;
 import com.kevlindev.tvm.assembler.model.Program;
-import com.kevlindev.tvm.io.FileUtil;
 import com.kevlindev.tvm.io.TVMFileWriter;
+import com.kevlindev.utils.FileUtils;
 import com.kevlindev.utils.IOUtils;
 
 public class AssemblerTest {
@@ -68,15 +68,15 @@ public class AssemblerTest {
 					tester.showSymbolListing(program);
 
 					// write bin file
-					File binFile = new File(FileUtil.setExtension(file, FileUtil.BIN_EXTENSION));
+					File binFile = new File(FileUtils.setExtension(file, FileUtils.BIN_EXTENSION));
 					TVMFileWriter.writeBinFile(program, binFile);
 
 					// write sym file
-					File symFile = new File(FileUtil.setExtension(file, FileUtil.SYM_EXTENSION));
+					File symFile = new File(FileUtils.setExtension(file, FileUtils.SYM_EXTENSION));
 					TVMFileWriter.writeSymFile(program, symFile);
 
 					// write lst file
-					File lstFile = new File(FileUtil.setExtension(file, FileUtil.LST_EXTENSION));
+					File lstFile = new File(FileUtils.setExtension(file, FileUtils.LST_EXTENSION));
 					TVMFileWriter.writeListing(program, lstFile);
 				}
 			}
