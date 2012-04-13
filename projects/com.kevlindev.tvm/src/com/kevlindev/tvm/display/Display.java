@@ -1,4 +1,4 @@
-package com.kevlindev.tvm;
+package com.kevlindev.tvm.display;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -67,7 +67,7 @@ public class Display extends Component {
 		if (ArrayUtils.isEmpty(slices)) {
 			return new Dimension(100, 100);
 		} else {
-			return new Dimension(4 * columnCount * scale, 8 * rowCount * scale);
+			return new Dimension(characterWidth * columnCount * scale, characterHeight * rowCount * scale);
 		}
 	}
 

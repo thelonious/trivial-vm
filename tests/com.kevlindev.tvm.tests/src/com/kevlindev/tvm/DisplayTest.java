@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import com.kevlindev.tvm.display.Display;
 import com.kevlindev.utils.ImageUtils;
 
 /**
@@ -57,7 +58,8 @@ public class DisplayTest {
 			"01 This is line one",
 			"02 And this is line two",
 			"03 This is a really long line that hopefully should get truncated to 80 columns if the logic is correct here.",
-			"04 Line 4"
+			"04 Line 4",
+			"05 oO0 1lL"
 		};
 		// @formatter:on
 
@@ -75,7 +77,7 @@ public class DisplayTest {
 
 		// create display and set state
 		Display display = new Display();
-		BufferedImage font = ImageIO.read(new File("image/font.png"));
+		BufferedImage font = ImageIO.read(new File("image/font2.png"));
 		ImageFilter colorfilter = new WhiteToGreenFilter();
 		Image greenFontImage = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(font.getSource(), colorfilter));
 		BufferedImage greenFont = ImageUtils.getBufferedImage(greenFontImage);
