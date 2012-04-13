@@ -3,7 +3,16 @@ package com.kevlindev.tvm.display;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.RGBImageFilter;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import com.kevlindev.utils.ArrayUtils;
 import com.kevlindev.utils.ImageUtils;
@@ -11,10 +20,24 @@ import com.kevlindev.utils.ImageUtils;
 /**
  * This class demonstrates how to load an Image from an external file
  */
-public class Display extends Component {
+public class TVMDisplay extends Component {
+	private class WhiteToGreenFilter extends RGBImageFilter {
+		@Override
+		public int filterRGB(int x, int y, int rgb) {
+			int alpha = 0xFF000000 & rgb;
+
+			if ((rgb & 0x00FFFFFF) != 0xFFFFFF) {
+				return alpha | 0x0060AA;
+			} else {
+				return rgb;
+			}
+		}
+	}
+
 	private static final long serialVersionUID = 8705442778453346381L;
 
 	private BufferedImage[] slices;
+	private int offset;
 	private int characterWidth;
 	private int characterHeight;
 
@@ -28,7 +51,7 @@ public class Display extends Component {
 	/**
 	 * Display
 	 */
-	public Display() {
+	public TVMDisplay() {
 	}
 
 	/**
@@ -101,7 +124,7 @@ public class Display extends Component {
 			for (int row = 0, y1 = 0; row < rowCount; row++, y1 += characterHeight * scale) {
 				for (int col = 0, x1 = 0; col < columnCount; col++, x1 += characterWidth * scale, index++) {
 					short c = memory[index + baseAddress];
-					BufferedImage image = slices[(32 <= c && c <= 127) ? c : 32];
+					BufferedImage image = slices[(32 <= c && c <= 127) ? c - offset : 32 - offset];
 
 					g.drawImage(image, x1, y1, characterWidth * scale, characterHeight * scale, null);
 				}
@@ -127,13 +150,36 @@ public class Display extends Component {
 		this.columnCount = columnCount;
 	}
 
+	public void setFont(FontInfo info) {
+		if (info != null) {
+			try {
+				BufferedImage font = ImageIO.read(new File("image/" + info.name + ".png"));
+				ImageFilter colorfilter = new WhiteToGreenFilter();
+				Image greenFontImage = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(font.getSource(), colorfilter));
+				BufferedImage greenFont = ImageUtils.getBufferedImage(greenFontImage);
+
+				setFont(greenFont, info.columns, info.rows, info.offset);
+				setScale(info.defaultScale);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void setFont(BufferedImage font, int columns, int rows) {
+		setFont(font, columns, rows, 0);
+	}
+
 	/**
 	 * setFont
 	 * 
 	 * @param image
+	 * @param columns
+	 * @param rows
 	 */
-	public void setFont(BufferedImage font) {
-		slices = ImageUtils.sliceImage(font, 32, 4);
+	public void setFont(BufferedImage font, int columns, int rows, int offset) {
+		slices = ImageUtils.sliceImage(font, columns, rows);
+		this.offset = offset;
 
 		if (!ArrayUtils.isEmpty(slices)) {
 			characterWidth = slices[0].getWidth();
