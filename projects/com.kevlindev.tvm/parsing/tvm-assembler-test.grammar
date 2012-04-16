@@ -1,0 +1,181 @@
+// java -jar beaver.jar -T -w tvm-assembler.grammar
+%package "com.kevlindev.tvm.assembler";
+
+%import "java.io.IOException";
+%import "java.util.HashMap";
+%import "java.util.Map";
+
+%import "com.kevlindev.tvm.assembler.ast.Address";
+%import "com.kevlindev.tvm.assembler.ast.BaseNode";
+%import "com.kevlindev.tvm.assembler.ast.Identifier";
+%import "com.kevlindev.tvm.assembler.ast.Instruction";
+%import "com.kevlindev.tvm.assembler.ast.Number";
+%import "com.kevlindev.tvm.assembler.ast.Opcode";
+%import "com.kevlindev.tvm.assembler.ast.Operand";
+%import "com.kevlindev.tvm.assembler.ast.OperandType";
+%import "com.kevlindev.tvm.assembler.ast.Program";
+%import "com.kevlindev.tvm.assembler.ast.Register";
+
+%class "TVMParser";
+
+%embed {:
+	private Address createAddress(String text) {
+		return new Address(Integer.parseInt(text.substring(1)));
+	}
+
+	private Register createRegister(String text) {
+		return new Register(Integer.parseInt(text.substring(1)));
+	}
+
+	public Program parse(String source) {
+		TVMLexer lexer = new TVMLexer();
+
+		lexer.setSource(source);
+
+		Object result = null;
+
+		try {
+			result = parse(lexer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (result instanceof Program) ? (Program) result : null;
+	}
+:};
+
+%terminals BRK, SET, INC, JEQ, JNE;
+%terminals ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER;
+%terminals COMMA, LBRACKET, RBRACKET, PLUS;
+
+%typeof Statement = "Instruction";
+%typeof Container, Source, Destination = "Operand";
+%typeof ADDRESS, REGISTER, NUMBER, LABEL, IDENTIFIER = "String";
+%typeof Location = "BaseNode";
+
+%goal Grammar;
+
+Grammar
+	=	Statements.s
+		{:
+			return new Program(_list_s);
+		:}
+	;
+
+Statements
+	=	Statements StatementWithLabel
+	|	StatementWithLabel
+	;
+
+StatementWithLabel
+	=	LABEL.l Statement.s
+		{:
+			s.setLabel(l.substring(1));
+
+			return s;
+		:}
+	|	Statement
+	;
+
+Statement
+	=	SET Container.c COMMA Source.s
+		{:
+			return new Instruction(Opcode.SET, c, s);
+		:}
+	|	INC Container.c
+		{:
+			return new Instruction(Opcode.INC, c);
+		:}
+	|	JEQ Destination.d
+		{:
+			return new Instruction(Opcode.JEQ, d);
+		:}
+	|	JNE Destination.d
+		{:
+			return new Instruction(Opcode.JNE, d);
+		:}
+	|	BRK
+		{:
+			return new Instruction(Opcode.BRK);
+		:}
+	;
+
+Container
+	=	Location.l
+		{:
+			return new Operand(OperandType.ADDRESS, l);
+		:}
+	|	Location.l PLUS REGISTER.r
+		{:
+			return new Operand(OperandType.ADDRESS_INDEXED, l, createRegister(r));
+		:}
+	|	LBRACKET Location.l RBRACKET
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT, l);
+		:}
+	|	LBRACKET Location.l PLUS REGISTER.r RBRACKET
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_INDEXED, l, createRegister(r));
+		:}
+	|	LBRACKET Location.l RBRACKET PLUS REGISTER.r
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT_POST_INDEXED, l, createRegister(r));
+		:}
+	|	LBRACKET Location.l PLUS REGISTER.r1 RBRACKET PLUS REGISTER.r2
+		{:
+			return new Operand(OperandType.ADDRESS_INDIRECT_PRE_AND_POST_INDEXED, l, createRegister(r1), createRegister(r2));
+		:}
+
+	|	REGISTER.r
+		{:
+			return new Operand(OperandType.REGISTER, createRegister(r));
+		:}
+	|	LBRACKET REGISTER.r RBRACKET
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT, createRegister(r));
+		:}
+	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_INDEXED, createRegister(r1), createRegister(r2));
+		:}
+	|	LBRACKET REGISTER.r1 RBRACKET PLUS REGISTER.r2
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_POST_INDEXED, createRegister(r1), createRegister(r2));
+		:}
+	|	LBRACKET REGISTER.r1 PLUS REGISTER.r2 RBRACKET PLUS REGISTER.r3
+		{:
+			return new Operand(OperandType.REGISTER_INDIRECT_PRE_AND_POST_INDEXED, createRegister(r1), createRegister(r2), createRegister(r3));
+		:}
+	;
+
+Source
+	=	Container
+	|	NUMBER.n
+		{:
+			return new Operand(OperandType.NUMBER, new Number(Integer.parseInt(n.substring(1))));
+		:}
+	;
+
+Location
+	=	ADDRESS.a
+		{:
+			return createAddress(a);
+		:}
+	|	IDENTIFIER.i
+		{:
+			return new Identifier(i);
+		:}
+	;
+
+Destination
+	=	ADDRESS.a
+		{:
+			return new Operand(OperandType.ADDRESS, createAddress(a));
+		:}
+	|	IDENTIFIER.i
+		{:
+			return new Operand(OperandType.LABEL, new Identifier(i));
+		:}
+	;

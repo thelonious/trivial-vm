@@ -6,18 +6,13 @@ package com.kevlindev.tvm.assembler;
  */
 public class Terminals {
 	static public final short EOF = 0;
-	static public final short REGISTER = 1;
-	static public final short PLUS = 2;
-	static public final short ADDRESS = 3;
-	static public final short IDENTIFIER = 4;
-	static public final short RBRACKET = 5;
-	static public final short LBRACKET = 6;
-	static public final short SET = 7;
-	static public final short INC = 8;
-	static public final short JEQ = 9;
-	static public final short JNE = 10;
-	static public final short BRK = 11;
-	static public final short LABEL = 12;
-	static public final short COMMA = 13;
-	static public final short NUMBER = 14;
+	static public final short CLR = 1;
+	static public final short INC = 2;
+	static public final short BEQ = 3;
+	static public final short BNE = 4;
+	static public final short BRK = 5;
+	static public final short REGISTER = 6;
+	static public final short LABEL = 7;
+	static public final short ADDRESS = 8;
+	static public final short IDENTIFIER = 9;
 }

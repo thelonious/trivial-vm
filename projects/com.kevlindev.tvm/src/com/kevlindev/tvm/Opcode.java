@@ -7,10 +7,10 @@ import java.util.Map;
 public enum Opcode {
 	// @formatter:off
 	BRK,
-	SET,
+	CLR,
 	INC,
-	JEQ,
-	JNE;
+	BEQ,
+	BNE;
 	// @formatter:on
 
 	private static final Map<Integer, Opcode> opcodeMap;

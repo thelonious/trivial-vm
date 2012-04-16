@@ -1,0 +1,9 @@
+package = com.kevlindev.mcpu.assembler
+language = MCPU
+keywords = [
+	NOR,
+	ADD,
+	STA,
+	JCC
+]
+operators = []

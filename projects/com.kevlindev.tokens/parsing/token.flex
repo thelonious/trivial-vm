@@ -1,4 +1,4 @@
-package com.kevlindev.tvm.assembler;
+package com.kevlindev.tokens;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -6,12 +6,15 @@ import java.io.StringReader;
 import beaver.Symbol;
 import beaver.Scanner;
 
-import com.kevlindev.tvm.assembler.TVMTokenType;
+import beaver.Scanner;
+import beaver.Symbol;
+
+import com.kevlindev.tokens.TokenType;
 
 %%
 
 %public
-%class TVMLexer
+%class TokenLexer
 %extends Scanner
 %type Symbol
 %yylexthrow Scanner.Exception
@@ -23,11 +26,11 @@ import com.kevlindev.tvm.assembler.TVMTokenType;
 %column
 
 %{
-	public TVMLexer() {
+	public TokenLexer() {
 		this((Reader) null);
 	}
 
-	private Symbol newToken(TVMTokenType type, Object value) {
+	private Symbol newToken(TokenType type, Object value) {
 		return newToken(type.getIndex(), value);
 	}
 
@@ -50,7 +53,7 @@ import com.kevlindev.tvm.assembler.TVMTokenType;
 			String text = yytext();
 			int end = yychar + text.length() - 1;
 
-			result = new Symbol(TVMTokenType.EOF.getIndex(), yychar, end, text);
+			result = new Symbol(TokenType.EOF.getIndex(), yychar, end, text);
 		}
 
 		return result;
@@ -66,7 +69,8 @@ EndOfLine = \r|\n|\r\n
 Comment = ;[^\r\n]*{EndOfLine}
 
 Identifier = [_a-zA-Z][-_a-zA-Z0-9]*
-Label = ":" {Identifier}
+DottedName = {Identifier}(\.{Identifier})*
+String = "\"" ([^\"\r\n] | "\\"[^\r\n]) "\""
 
 %%
 
@@ -75,22 +79,17 @@ Label = ":" {Identifier}
 	{Whitespace}	{ /* ignore */ }
 	{Comment}		{ /* ignore */ }
 	
-	//","				{ return newToken(TVMTokenType.COMMA,		yytext()); }
-	//"+"				{ return newToken(TVMTokenType.PLUS,		yytext()); }
-	//"["				{ return newToken(TVMTokenType.LBRACKET,	yytext()); }
-	//"]"				{ return newToken(TVMTokenType.RBRACKET,	yytext()); }
-	[rR][0-9]		{ return newToken(TVMTokenType.REGISTER,	yytext()); }
-	//"#"[0-9]+		{ return newToken(TVMTokenType.NUMBER,		yytext()); }
-	"$"[0-9]+		{ return newToken(TVMTokenType.ADDRESS,		yytext()); }
+	"="				{ return newToken(TokenType.EQUAL,		yytext()); }
+	"["				{ return newToken(TokenType.LBRACKET,	yytext()); }
+	"]"				{ return newToken(TokenType.RBRACKET,	yytext()); }
+	{String}		{ return newToken(TokenType.STRING,		yytext()); }
 	
-	"BRK"			{ return newToken(TVMTokenType.BRK,			yytext()); }
-	"CLR"			{ return newToken(TVMTokenType.CLR,			yytext()); }
-	"INC"			{ return newToken(TVMTokenType.INC,			yytext()); }
-	"BEQ"			{ return newToken(TVMTokenType.BEQ,			yytext()); }
-	"BNE"			{ return newToken(TVMTokenType.BNE,			yytext()); }
+	"package"		{ return newToken(TokenType.PACKAGE,	yytext()); }
+	"language"		{ return newToken(TokenType.LANGUAGE,	yytext()); }
+	"keywords"		{ return newToken(TokenType.KEYWORDS,	yytext()); }
+	"operators"		{ return newToken(TokenType.OPERATORS,	yytext()); }
 	
-	{Label}			{ return newToken(TVMTokenType.LABEL,		yytext()); }
-	{Identifier}	{ return newToken(TVMTokenType.IDENTIFIER,	yytext()); }
+	{DottedName}	{ return newToken(TokenType.IDENTIFIER,	yytext()); }
 }
 
 /* error fallback */

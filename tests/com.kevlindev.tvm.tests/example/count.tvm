@@ -1,9 +1,9 @@
 ; A simple counting example
 
-	SET	r1, #1
+	CLR	r1
 :advance
 	INC	r1
-	JEQ	stop	; using two jmps to test forward
-	JNE	advance	; and backward label resolution
+	BEQ	stop	; using two jmps to test forward
+	BNE	advance	; and backward label resolution
 :stop
 	BRK

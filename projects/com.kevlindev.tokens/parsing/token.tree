@@ -1,0 +1,113 @@
+// java -jar beaver.jar -T -w tokens.grammar
+%package "com.kevlindev.tokens";
+
+%import "java.io.IOException";
+%import "java.util.List";
+%import "java.util.HashMap";
+%import "java.util.Map";
+
+%class "TokenTreeParser";
+
+%embed {:
+	private String pkg;
+	private String language;
+	private List<String> keywords = new ArrayList<String>();
+	private List<String> operators = new ArrayList<String>(); 
+	
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public List<String> getOperators() {
+		return operators;
+	}
+
+	public String getPackage() {
+		return pkg;
+	}
+
+	public Object parse(TokenNode root) {
+		TreeScanner scanner = new TreeScanner();
+
+		scanner.setNode(root);
+
+		Object result = null;
+
+		try {
+			result = parse(scanner);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+:};
+
+%terminals DOWN, UP;
+%terminals ROOT, PACKAGE, LANGUAGE, KEYWORDS, OPERATORS, IDENTIFIER, STRING;
+
+%typeof IDENTIFIER, STRING, Word = "Symbol";
+
+%goal Grammar;
+
+Grammar
+	=	Tree
+	;
+
+Tree
+	=	ROOT DOWN Statements UP
+	;
+
+Statements
+	=	Statements Statement
+	|	Statement
+	;
+
+Statement
+	=	PACKAGE DOWN IDENTIFIER.i UP
+		{:
+			pkg = i.value.toString();
+			
+			return i;
+		:}
+	|	LANGUAGE DOWN IDENTIFIER.i UP
+		{:
+			language = i.value.toString();
+			
+			return i;
+		:}
+	|	KEYWORDS
+	|	KEYWORDS DOWN Identifiers.is UP
+		{:
+			for (Object ident : _list_is) {
+				keywords.add(((Symbol)ident).value.toString());
+			}
+			
+			return _symbol_is;
+		:}
+	|	OPERATORS
+	|	OPERATORS DOWN Identifiers.is UP
+		{:
+			for (Object ident : is) {
+				operators.add(((Symbol)ident).value.toString());
+			}
+			
+			return _symbol_is;
+		:}
+	;
+
+Identifiers
+	=	Identifiers Word
+	|	Word
+	;
+
+Word
+	=	IDENTIFIER
+	|	STRING
+	;

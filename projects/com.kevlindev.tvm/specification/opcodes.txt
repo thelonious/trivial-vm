@@ -1,3 +1,46 @@
+# Symbols
+; registers
+r[64]: 0000 0000 0000 0000
+n = two's complement number
+a: 0000 0000 0000 0000 ; address
+ia = instruction address
+c = carry flag = 0
+z = zero flag = 0
+pc = program counter = 0000 0000 0000 0000
+sb = status byte = zc00 0000
+
+; 01 \
+; 10 |-> 64 one-byte instructions
+; 11 /
+; 001 - 8192 two-byte instructions
+; 000 - 2^21 ~2 million 3-byte instructions
+
+BRK
+	0000 0000
+	; halt or jmp through break vector
+
+CLR r
+	001 rrrrr
+	r[rrrrr] <= 0
+	z <= 1
+	pc <= pc + 1
+
+INC r
+	010 rrrrr
+	r[rrrrr] <= r[rrrrr] + 1
+	z = r[rrrrr] == 0
+	pc <= pc + 1
+
+BEQ a
+	nnnnn <= a - ia
+	011 nnnnn
+	pc <= pc + z ? nnnnn + 1
+
+BNE a
+	nnnnn <= a - ia
+	100 nnnnn
+	pc <= pc + !z ? nnnnn : 1
+
 # Logical operators
 AND
 OR
