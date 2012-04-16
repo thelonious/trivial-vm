@@ -9,7 +9,7 @@ import java.util.List;
 
 import beaver.Symbol;
 
-import com.kevlindev.text.SourceBuilder;
+import com.kevlindev.parsing.SourceBuilder;
 import com.kevlindev.utils.StringUtils;
 
 /**
