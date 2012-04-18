@@ -72,7 +72,7 @@ Comment = ;[^\r\n]*{EndOfLine}
 Identifier = [_a-zA-Z][-_a-zA-Z0-9]*
 Label = {Identifier} ":"
 
-Number = \d+
+Number = [0-9]+
 Hex = "0x"[a-fA-F0-9]{1,2}
 
 %%

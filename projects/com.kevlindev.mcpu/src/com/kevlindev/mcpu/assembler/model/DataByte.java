@@ -4,6 +4,7 @@
 package com.kevlindev.mcpu.assembler.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,12 +25,16 @@ public class DataByte extends BaseNode {
 	}
 
 	@Override
-	public List<Integer> getByteCode() {
-		return bytes;
+	public List<Integer> getByteCode(Program program) {
+		if (bytes == null) {
+			return Collections.emptyList();
+		} else {
+			return bytes;
+		}
 	}
 
 	@Override
-	public int getSize() {
-		return bytes.size();
+	public int getByteCount() {
+		return (bytes != null) ? bytes.size() : 0;
 	}
 }

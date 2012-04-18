@@ -23,5 +23,5 @@ zero:	.db 0x00
 one:	.db 0x01
 
 ; variables
-a:		.db 0x00
-b:		.db 0x00
+a:		.db 26
+b:		.db 12

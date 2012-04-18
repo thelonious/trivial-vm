@@ -5,6 +5,7 @@ package com.kevlindev.mcpu.assembler.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.kevlindev.utils.CollectionUtils;
 import com.kevlindev.utils.StringUtils;
@@ -15,8 +16,10 @@ import com.kevlindev.utils.StringUtils;
  */
 public class Program extends BaseNode {
 	private List<BaseNode> children;
+	private Map<String, BaseNode> symbols;
 
-	public Program() {
+	public Program(Map<String, BaseNode> symbols) {
+		this.symbols = symbols;
 	}
 
 	public void addChild(BaseNode child) {
@@ -37,14 +40,20 @@ public class Program extends BaseNode {
 		}
 	}
 
-	public List<Integer> getByteCode() {
+	public List<Integer> getByteCode(Program program) {
 		List<Integer> result = new ArrayList<Integer>();
 
-		// assign label offset
+		// assign addresses
+		int address = 0;
+
+		for (BaseNode node : getChildren()) {
+			node.setBaseAddress(address);
+			address += node.getByteCount();
+		}
 
 		// generate bytecode
 		for (BaseNode node : getChildren()) {
-			List<Integer> bytes = node.getByteCode();
+			List<Integer> bytes = node.getByteCode(this);
 
 			if (!CollectionUtils.isEmpty(bytes)) {
 				result.addAll(bytes);
@@ -58,8 +67,20 @@ public class Program extends BaseNode {
 		return children;
 	}
 
-	public int getSize() {
+	public int getByteCount() {
 		return 0;
+	}
+
+	public int getSymbolAddress(String symbol) {
+		int result = 0;
+
+		if (symbols != null && symbols.containsKey(symbol)) {
+			BaseNode node = symbols.get(symbol);
+
+			result = node.getBaseAddress();
+		}
+
+		return result;
 	}
 
 	public String toString() {

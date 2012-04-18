@@ -37,7 +37,7 @@ public class VMTest {
 		}
 
 		vm.run();
-		
+
 		System.out.println(memory[17]);
 		System.out.println(memory[18]);
 	}

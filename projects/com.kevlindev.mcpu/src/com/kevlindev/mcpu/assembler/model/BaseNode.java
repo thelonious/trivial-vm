@@ -19,13 +19,13 @@ public abstract class BaseNode extends Symbol {
 		return baseAddress;
 	}
 
-	public abstract List<Integer> getByteCode();
+	public abstract List<Integer> getByteCode(Program program);
 
 	public String getLabel() {
 		return label;
 	}
 
-	public abstract int getSize();
+	public abstract int getByteCount();
 
 	public void setBaseAddress(int address) {
 		baseAddress = address;

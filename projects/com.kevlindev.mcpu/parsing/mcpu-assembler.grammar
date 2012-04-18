@@ -49,7 +49,7 @@
 %terminals DB;
 %terminals LABEL, IDENTIFIER;
 
-%typeof LABEL, IDENTIFIER = "String";
+%typeof LABEL, IDENTIFIER, NUMBER, HEX = "String";
 %typeof Statement = "BaseNode";
 
 %goal Grammar;
@@ -57,7 +57,7 @@
 Grammar
 	=	Statements.s
 		{:
-			Program result = new Program();
+			Program result = new Program(labels);
 			
 			result.addChildren(_list_s);
 			
@@ -73,7 +73,10 @@ Statements
 StatementWithLabel
 	=	LABEL.l Statement.s
 		{:
-			s.setLabel(l);
+			String label = l.substring(0, l.length() - 1);
+
+			s.setLabel(label);
+			labels.put(label, s);
 			
 			return s;
 		:}
@@ -101,8 +104,9 @@ Statement
 		{:
 			DataByte result = new DataByte();
 			
-			for (Object o : ns) {
-			// TODO: add numbers here
+			for (Symbol o : ns) {
+				Integer i = (Integer) o.value;
+				result.addByte(i.intValue());
 			}
 			
 			return result;
@@ -115,6 +119,12 @@ Numbers
 	;
 
 Number
-	=	NUMBER
-	|	HEX
+	=	NUMBER.n
+		{:
+			return new Symbol(Integer.parseInt(n));
+		:}
+	|	HEX.h
+		{:
+			return new Symbol(Integer.parseInt(h.substring(2), 16));
+		:}
 	;

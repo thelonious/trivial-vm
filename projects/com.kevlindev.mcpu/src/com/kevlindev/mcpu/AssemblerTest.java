@@ -25,11 +25,23 @@ public class AssemblerTest {
 			String source = IOUtils.getString(new FileInputStream(args[0]));
 			Program result = new MCPUParser().parse(source);
 
-			List<Integer> bytes = result.getByteCode();
+			List<Integer> bytes = result.getByteCode(null);
+			MCPUVM vm = new MCPUVM();
+			int[] memory = vm.getMemory();
 
-			for (Integer byteCode : bytes) {
-				System.out.println(String.format("%02X", byteCode));
+			for (int i = 0; i < bytes.size(); i++) {
+				int b = bytes.get(i);
+
+				memory[i] = b;
+				System.out.println(String.format("%02X: %02X", i, b));
 			}
+
+			vm.run();
+
+			System.out.println();
+			System.out.println("Result:");
+			System.out.println(memory[17]);
+			System.out.println(memory[18]);
 		} else {
 			System.out.println("usage: test <mcpu-file>");
 		}

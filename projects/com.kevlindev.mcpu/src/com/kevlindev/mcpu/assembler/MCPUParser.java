@@ -31,19 +31,6 @@ public class MCPUParser extends Parser {
 		labels.put(label, node);
 	}
 
-	public List<Integer> getByteCode(Program program) {
-		List<Integer> result = new ArrayList<Integer>();
-		
-		// assign label offset
-		for (BaseNode node : program.getChildren()) {
-			
-		}
-		
-		// generate bytecode
-		
-		return result;
-	}
-	
 	public Map<String, BaseNode> getLabels() {
 		return labels;
 	}
@@ -78,7 +65,7 @@ public class MCPUParser extends Parser {
 					final ArrayList _list_s = (ArrayList) _symbol_s.value;
 					final beaver.Symbol[] s = _list_s == null ? new beaver.Symbol[0] : (beaver.Symbol[]) _list_s.toArray(new beaver.Symbol[_list_s.size()]);
 					
-			Program result = new Program();
+			Program result = new Program(labels);
 			
 			result.addChildren(_list_s);
 			
@@ -99,7 +86,10 @@ public class MCPUParser extends Parser {
 					final Symbol _symbol_s = _symbols[offset + 2];
 					final BaseNode s = (BaseNode) _symbol_s.value;
 					
-			s.setLabel(l);
+			String label = l.substring(0, l.length() - 1);
+			
+			s.setLabel(label);
+			labels.put(label, s);
 			
 			return s;
 			}
@@ -139,8 +129,9 @@ public class MCPUParser extends Parser {
 					
 			DataByte result = new DataByte();
 			
-			for (Object o : ns) {
-			// TODO: add numbers here
+			for (Symbol o : ns) {
+				Integer i = (Integer) o.value;
+				result.addByte(i.intValue());
 			}
 			
 			return result;
@@ -153,9 +144,21 @@ public class MCPUParser extends Parser {
 			{
 					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1]); return new Symbol(lst);
 			}
+			case 12: // Number = NUMBER.n
+			{
+					final Symbol _symbol_n = _symbols[offset + 1];
+					final String n = (String) _symbol_n.value;
+					
+			return new Symbol(Integer.parseInt(n));
+			}
+			case 13: // Number = HEX.h
+			{
+					final Symbol _symbol_h = _symbols[offset + 1];
+					final String h = (String) _symbol_h.value;
+					
+			return new Symbol(Integer.parseInt(h.substring(2), 16));
+			}
 			case 4: // StatementWithLabel = Statement
-			case 12: // Number = NUMBER
-			case 13: // Number = HEX
 			{
 				return _symbols[offset + 1];
 			}

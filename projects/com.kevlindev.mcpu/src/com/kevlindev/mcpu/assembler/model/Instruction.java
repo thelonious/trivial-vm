@@ -26,9 +26,10 @@ public class Instruction extends BaseNode {
 	}
 
 	@Override
-	public List<Integer> getByteCode() {
-		int b = ((opcode.getOpcode() << 6) | 0);
-		
+	public List<Integer> getByteCode(Program program) {
+		int addr = program.getSymbolAddress(address);
+		int b = ((opcode.getOpcode() << 6) | addr);
+
 		return CollectionUtils.createList(b);
 	}
 
@@ -37,7 +38,7 @@ public class Instruction extends BaseNode {
 	}
 
 	@Override
-	public int getSize() {
+	public int getByteCount() {
 		return 1;
 	}
 }
