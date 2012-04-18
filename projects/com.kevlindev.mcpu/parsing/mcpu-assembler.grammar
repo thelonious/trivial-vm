@@ -1,0 +1,120 @@
+// java -jar beaver.jar -T -w mcpu-assembler.grammar
+%package "com.kevlindev.mcpu.assembler";
+
+%import "java.io.IOException";
+%import "java.util.HashMap";
+%import "java.util.List";
+%import "java.util.Map";
+
+%import "com.kevlindev.mcpu.Opcode";
+%import "com.kevlindev.mcpu.assembler.model.BaseNode";
+%import "com.kevlindev.mcpu.assembler.model.DataByte";
+%import "com.kevlindev.mcpu.assembler.model.Instruction";
+%import "com.kevlindev.mcpu.assembler.model.Program";
+
+%class "MCPUParser";
+
+%embed {:
+	private Map<String, BaseNode> labels = new HashMap<String, BaseNode>();
+	
+	public void addLabel(String label, BaseNode node) {
+		labels.put(label, node);
+	}
+
+	public Map<String, BaseNode> getLabels() {
+		return labels;
+	}
+
+	public Program parse(String source) {
+		MCPULexer lexer = new MCPULexer();
+
+		lexer.setSource(source);
+
+		Object result = null;
+
+		try {
+			result = parse(lexer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (result instanceof Program) ? (Program) result : null;
+	}
+:};
+
+%terminals NOR, ADD, STA, JCC;
+%terminals NUMBER, HEX;
+%terminals DB;
+%terminals LABEL, IDENTIFIER;
+
+%typeof LABEL, IDENTIFIER = "String";
+%typeof Statement = "BaseNode";
+
+%goal Grammar;
+
+Grammar
+	=	Statements.s
+		{:
+			Program result = new Program();
+			
+			result.addChildren(_list_s);
+			
+			return result;
+		:}
+	;
+
+Statements
+	=	Statements StatementWithLabel
+	|	StatementWithLabel
+	;
+
+StatementWithLabel
+	=	LABEL.l Statement.s
+		{:
+			s.setLabel(l);
+			
+			return s;
+		:}
+	|	Statement
+	;
+
+Statement
+	=	NOR IDENTIFIER.i
+		{:
+			return new Instruction(Opcode.NOR, i);
+		:}
+	|	ADD IDENTIFIER.i
+		{:
+			return new Instruction(Opcode.ADD, i);
+		:}
+	|	STA IDENTIFIER.i
+		{:
+			return new Instruction(Opcode.STA, i);
+		:}
+	|	JCC IDENTIFIER.i
+		{:
+			return new Instruction(Opcode.JCC, i);
+		:}
+	|	DB Numbers.ns
+		{:
+			DataByte result = new DataByte();
+			
+			for (Object o : ns) {
+			// TODO: add numbers here
+			}
+			
+			return result;
+		:}
+	;
+
+Numbers
+	=	Numbers Number
+	|	Number
+	;
+
+Number
+	=	NUMBER
+	|	HEX
+	;

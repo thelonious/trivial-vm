@@ -1,0 +1,27 @@
+start:
+	NOR allone	; Akku = 0
+	NOR b
+	ADD one		; Akku=−b
+	ADD a		; Akku=a−b
+				; Carry set when akku >= 0
+	JCC neg
+	STA a
+	ADD allone
+	JCC end		; A=0 ? -> end, result in b
+	JCC start
+neg:
+	NOR zero
+	ADD one
+	STA b
+	JCC start
+end:
+	JCC end
+
+; constants
+allone:	.db	0xFF
+zero:	.db 0x00
+one:	.db 0x01
+
+; variables
+a:		.db 0x00
+b:		.db 0x00

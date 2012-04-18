@@ -1,4 +1,4 @@
-package com.kevlindev.tvm.assembler;
+package com.kevlindev.mcpu.assembler;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -6,12 +6,15 @@ import java.io.StringReader;
 import beaver.Symbol;
 import beaver.Scanner;
 
-import com.kevlindev.tvm.assembler.TVMTokenType;
+import beaver.Scanner;
+import beaver.Symbol;
+
+import com.kevlindev.mcpu.assembler.MCPUTokenType;
 
 %%
 
 %public
-%class TVMLexer
+%class MCPULexer
 %extends Scanner
 %type Symbol
 %yylexthrow Scanner.Exception
@@ -19,15 +22,16 @@ import com.kevlindev.tvm.assembler.TVMTokenType;
 	return newToken(Terminals.EOF, "end-of-file");
 %eofval}
 %unicode
+%ignorecase
 %line
 %column
 
 %{
-	public TVMLexer() {
+	public MCPULexer() {
 		this((Reader) null);
 	}
 
-	private Symbol newToken(TVMTokenType type, Object value) {
+	private Symbol newToken(MCPUTokenType type, Object value) {
 		return newToken(type.getIndex(), value);
 	}
 
@@ -50,7 +54,7 @@ import com.kevlindev.tvm.assembler.TVMTokenType;
 			String text = yytext();
 			int end = yychar + text.length() - 1;
 
-			result = new Symbol(TVMTokenType.EOF.getIndex(), yychar, end, text);
+			result = new Symbol(MCPUTokenType.EOF.getIndex(), yychar, end, text);
 		}
 
 		return result;
@@ -66,31 +70,34 @@ EndOfLine = \r|\n|\r\n
 Comment = ;[^\r\n]*{EndOfLine}
 
 Identifier = [_a-zA-Z][-_a-zA-Z0-9]*
-Label = ":" {Identifier}
+Label = {Identifier} ":"
+
+Number = \d+
+Hex = "0x"[a-fA-F0-9]{1,2}
 
 %%
 
 /* keywords */
 <YYINITIAL> {
+	// assume we always have whitespace and that it is skipped
 	{Whitespace}	{ /* ignore */ }
+	
+	// assume we always have comments and they are skipped
 	{Comment}		{ /* ignore */ }
 	
-	//","				{ return newToken(TVMTokenType.COMMA,		yytext()); }
-	//"+"				{ return newToken(TVMTokenType.PLUS,		yytext()); }
-	//"["				{ return newToken(TVMTokenType.LBRACKET,	yytext()); }
-	//"]"				{ return newToken(TVMTokenType.RBRACKET,	yytext()); }
-	[rR][0-9]		{ return newToken(TVMTokenType.REGISTER,	yytext()); }
-	//"#"[0-9]+		{ return newToken(TVMTokenType.NUMBER,		yytext()); }
-	"$"[0-9]+		{ return newToken(TVMTokenType.ADDRESS,		yytext()); }
+	{Number}		{ return newToken(MCPUTokenType.NUMBER,	yytext()); }
+	{Hex}			{ return newToken(MCPUTokenType.HEX,	yytext()); }
 	
-	"BRK"			{ return newToken(TVMTokenType.BRK,			yytext()); }
-	"CLR"			{ return newToken(TVMTokenType.CLR,			yytext()); }
-	"INC"			{ return newToken(TVMTokenType.INC,			yytext()); }
-	"BEQ"			{ return newToken(TVMTokenType.BEQ,			yytext()); }
-	"BNE"			{ return newToken(TVMTokenType.BNE,			yytext()); }
+	// emit keywords
+	".DB"			{ return newToken(MCPUTokenType.DB,		yytext()); }
+	"NOR"			{ return newToken(MCPUTokenType.NOR,	yytext()); }
+	"ADD"			{ return newToken(MCPUTokenType.ADD,	yytext()); }
+	"STA"			{ return newToken(MCPUTokenType.STA,	yytext()); }
+	"JCC"			{ return newToken(MCPUTokenType.JCC,	yytext()); }
 	
-	{Label}			{ return newToken(TVMTokenType.LABEL,		yytext()); }
-	{Identifier}	{ return newToken(TVMTokenType.IDENTIFIER,	yytext()); }
+	// identifiers and such
+	{Label}			{ return newToken(MCPUTokenType.LABEL,		yytext()); }
+	{Identifier}	{ return newToken(MCPUTokenType.IDENTIFIER,	yytext()); }
 }
 
 /* error fallback */
