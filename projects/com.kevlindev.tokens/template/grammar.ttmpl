@@ -1,0 +1,143 @@
+// java -jar beaver.jar -T -w ${language}.grammar
+%package "${package}";
+
+%import "java.io.IOException";
+%import "java.util.List";
+%import "java.util.HashMap";
+%import "java.util.Map";
+
+%class "${language}Parser";
+
+%embed {:
+	public ${language}Node parse(String source) {
+		${language}Lexer lexer = new ${language}Lexer();
+
+		lexer.setSource(source);
+
+		Object result = null;
+
+		try {
+			result = parse(lexer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (result instanceof ${language}Node) ? (${language}Node) result : null;
+	}
+:};
+
+// list all terminals
+%terminals EQUAL, LBRACKET, RBRACKET;
+%terminals PACKAGE, LANGUAGE, KEYWORDS, OPERATORS;
+%terminals IDENTIFIER, STRING;
+
+// not sure if these can be inferred
+%typeof Statement, Word = "TokenNode";
+%typeof List, Identifiers, Statements = "List<TokenNode>";
+
+%goal Grammar;
+
+// maybe make a simple set of rules that involve all tokens
+Grammar
+	=	Statements.ss
+		{:
+			TokenNode result = new TokenNode(TokenType.ROOT);
+			
+			result.addChildren(ss);
+			
+			return new Symbol(result);
+		:}
+	;
+
+Statements
+	=	Statements.ss Statement.s
+		{:
+			ss.add(s);
+			
+			return new Symbol(ss);
+		:}
+	|	Statement.s
+		{:
+			List<TokenNode> result = new ArrayList<TokenNode>();
+			
+			result.add(s);
+			
+			return new Symbol(result);
+		:}
+	;
+
+Statement
+	=	PACKAGE.p EQUAL IDENTIFIER.i
+		{:
+			TokenNode result = new TokenNode(p);
+			
+			result.addChild(new TokenNode(i));
+			
+			return result;
+		:}
+	|	LANGUAGE.l EQUAL IDENTIFIER.i
+		{:
+			TokenNode result = new TokenNode(l);
+			
+			result.addChild(new TokenNode(i));
+			
+			return result;
+		:}
+	|	KEYWORDS.k EQUAL List.l
+		{:
+			TokenNode result = new TokenNode(k);
+			
+			result.addChildren(l);
+			
+			return result;
+		:}
+	|	OPERATORS.o EQUAL List.l
+		{:
+			TokenNode result = new TokenNode(o);
+			
+			result.addChildren(l);
+			
+			return result;
+		:}
+	;
+
+List
+	=	LBRACKET RBRACKET
+		{:
+			return new Symbol(new ArrayList<TokenNode>());
+		:}
+	|	LBRACKET Identifiers.i RBRACKET
+		{:
+			return new Symbol(i);
+		:}
+	;
+
+Identifiers
+	=	Identifiers.is Word.w
+		{:
+			is.add(w);
+			
+			return new Symbol(is);
+		:}
+	|	Word.w
+		{:
+			List<TokenNode> result = new ArrayList<TokenNode>();
+			
+			result.add(w);
+			
+			return new Symbol(result);
+		:}
+	;
+
+Word
+	=	IDENTIFIER.i
+		{:
+			return new TokenNode(i);
+		:}
+	|	STRING.s
+		{:
+			return new TokenNode(s);
+		:}
+	;

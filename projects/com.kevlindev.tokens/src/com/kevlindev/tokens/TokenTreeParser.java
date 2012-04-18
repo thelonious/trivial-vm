@@ -1,9 +1,12 @@
 package com.kevlindev.tokens;
 
 import java.util.ArrayList;
+import com.kevlindev.text.StringIterator;
 import java.util.Map;
 import beaver.*;
 import java.util.List;
+import com.kevlindev.text.ListIterator;
+import com.kevlindev.text.ResettableIterator;
 import java.util.HashMap;
 import java.io.IOException;
 
@@ -21,40 +24,27 @@ public class TokenTreeParser extends Parser {
 		"Iqkr$r$y7hj#$$83zitPp$JnaZ$wFgUzSrUawxioHxitXxj9Vbd#q2yju4vScy1tlEO2Hlg" +
 		"tVRULvd1DrOeF9W=");
 
-	private String pkg;
-	private String language;
-	private List<String> keywords = new ArrayList<String>();
-	private List<String> operators = new ArrayList<String>(); 
+	private Map<String, ResettableIterator<String>> properties = new HashMap<String, ResettableIterator<String>>();
 	
-	public List<String> getKeywords() {
-		return keywords;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public List<String> getOperators() {
-		return operators;
-	}
-
-	public String getPackage() {
-		return pkg;
+	public Map<String, ResettableIterator<String>> getProperties() {
+		return properties;
 	}
 
 	public Object parse(TokenNode root) {
-		TreeScanner scanner = new TreeScanner();
-
-		scanner.setNode(root);
-
 		Object result = null;
+		
+		if (root != null) {
+			TreeScanner scanner = new TreeScanner();
 
-		try {
-			result = parse(scanner);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+			scanner.setNode(root);
+
+			try {
+				result = parse(scanner);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		return result;
@@ -79,7 +69,7 @@ public class TokenTreeParser extends Parser {
 					final Symbol _symbol_i = _symbols[offset + 3];
 					final Symbol i = (Symbol) _symbol_i.value;
 					
-			pkg = i.value.toString();
+			properties.put("package", new StringIterator(i.value.toString()));
 			
 			return i;
 			}
@@ -88,39 +78,61 @@ public class TokenTreeParser extends Parser {
 					final Symbol _symbol_i = _symbols[offset + 3];
 					final Symbol i = (Symbol) _symbol_i.value;
 					
-			language = i.value.toString();
+			properties.put("language", new StringIterator(i.value.toString()));
 			
 			return i;
 			}
-			case 7: // Statement = KEYWORDS DOWN Identifiers.is UP
+			case 7: // Statement = KEYWORDS DOWN Words.ws UP
 			{
-					final Symbol _symbol_is = _symbols[offset + 3];
-					final ArrayList _list_is = (ArrayList) _symbol_is.value;
-					final Symbol[] is = _list_is == null ? new Symbol[0] : (Symbol[]) _list_is.toArray(new Symbol[_list_is.size()]);
+					final Symbol _symbol_ws = _symbols[offset + 3];
+					final ArrayList _list_ws = (ArrayList) _symbol_ws.value;
+					final Symbol[] ws = _list_ws == null ? new Symbol[0] : (Symbol[]) _list_ws.toArray(new Symbol[_list_ws.size()]);
 					
-			for (Object ident : _list_is) {
-				keywords.add(((Symbol)ident).value.toString());
+			List<String> keywords = new ArrayList<String>();
+			
+			for (Object word : _list_ws) {
+				Symbol wordSymbol = (Symbol) word;
+				String content = (String) wordSymbol.value;
+				
+				if (wordSymbol.getId() == TokenType.STRING.getIndex()) {
+					keywords.add(content.substring(1, content.length() - 1));
+				} else {
+					keywords.add(content);
+				}
 			}
 			
-			return _symbol_is;
+			properties.put("keywords", new ListIterator(keywords));
+			
+			return _symbol_ws;
 			}
-			case 9: // Statement = OPERATORS DOWN Identifiers.is UP
+			case 9: // Statement = OPERATORS DOWN Words.ws UP
 			{
-					final Symbol _symbol_is = _symbols[offset + 3];
-					final ArrayList _list_is = (ArrayList) _symbol_is.value;
-					final Symbol[] is = _list_is == null ? new Symbol[0] : (Symbol[]) _list_is.toArray(new Symbol[_list_is.size()]);
+					final Symbol _symbol_ws = _symbols[offset + 3];
+					final ArrayList _list_ws = (ArrayList) _symbol_ws.value;
+					final Symbol[] ws = _list_ws == null ? new Symbol[0] : (Symbol[]) _list_ws.toArray(new Symbol[_list_ws.size()]);
 					
-			for (Object ident : is) {
-				operators.add(((Symbol)ident).value.toString());
+			List<String> operators = new ArrayList<String>();
+			
+			for (Object word : _list_ws) {
+				Symbol wordSymbol = (Symbol) word;
+				String content = (String) wordSymbol.value;
+				
+				if (wordSymbol.getId() == TokenType.STRING.getIndex()) {
+					operators.add(content.substring(1, content.length() - 1));
+				} else {
+					operators.add(content);
+				}
 			}
 			
-			return _symbol_is;
+			properties.put("operators", new ListIterator(operators));
+			
+			return _symbol_ws;
 			}
-			case 10: // Identifiers = Identifiers Word
+			case 10: // Words = Words Word
 			{
 					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 2].value); return _symbols[offset + 1];
 			}
-			case 11: // Identifiers = Word
+			case 11: // Words = Word
 			{
 					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1].value); return new Symbol(lst);
 			}
