@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,51 +10,52 @@ import java.util.List;
 import beaver.Symbol;
 
 import com.kevlindev.parsing.SourceBuilder;
+import com.kevlindev.template.parser.TemplateTokenType;
 import com.kevlindev.utils.StringUtils;
 
 /**
  * @author Kevin Lindsey
  */
-public class TokenNode extends Symbol {
+public class TemplateNode extends Symbol {
 	private Symbol symbol;
-	private TokenType type;
-	private TokenNode parent;
-	private List<TokenNode> children;
+	private TemplateTokenType type;
+	private TemplateNode parent;
+	private List<TemplateNode> children;
 
-	public TokenNode(Symbol symbol) {
+	public TemplateNode(Symbol symbol) {
 		this.symbol = symbol;
-		this.type = TokenType.getTokenType(symbol.getId());
+		this.type = TemplateTokenType.getTokenType(symbol.getId());
 	}
 
-	public TokenNode(TokenType type) {
+	public TemplateNode(TemplateTokenType type) {
 		this.symbol = new Symbol(type.getIndex());
 		this.type = type;
 	}
 
-	public void addChild(TokenNode child) {
+	public void addChild(TemplateNode child) {
 		if (children == null) {
-			children = new ArrayList<TokenNode>();
+			children = new ArrayList<TemplateNode>();
 		}
 
 		children.add(child);
 		child.setParent(this);
 	}
 
-	public void addChildren(List<TokenNode> children) {
+	public void addChildren(List<TemplateNode> children) {
 		// HACK: adding no children will create the backing array which is used to indicate that this is not a leaf node
 		// even though it has no children
 		if (this.children == null) {
-			this.children = new ArrayList<TokenNode>();
+			this.children = new ArrayList<TemplateNode>();
 		}
 
 		if (children != null) {
-			for (TokenNode child : children) {
+			for (TemplateNode child : children) {
 				addChild(child);
 			}
 		}
 	}
 
-	public List<TokenNode> getChildren() {
+	public List<TemplateNode> getChildren() {
 		if (children == null) {
 			return Collections.emptyList();
 		} else {
@@ -62,11 +63,11 @@ public class TokenNode extends Symbol {
 		}
 	}
 
-	public TokenNode getFirstChild() {
+	public TemplateNode getFirstChild() {
 		return (children != null && !children.isEmpty()) ? children.get(0) : null;
 	}
 
-	public TokenNode getParent() {
+	public TemplateNode getParent() {
 		return parent;
 	}
 
@@ -80,7 +81,7 @@ public class TokenNode extends Symbol {
 		return (value != null) ? value.toString() : StringUtils.EMPTY;
 	}
 
-	public TokenType getType() {
+	public TemplateTokenType getType() {
 		return type;
 	}
 
@@ -92,7 +93,7 @@ public class TokenNode extends Symbol {
 		return (children != null && !children.isEmpty());
 	}
 
-	protected void setParent(TokenNode parent) {
+	protected void setParent(TemplateNode parent) {
 		this.parent = parent;
 	}
 
@@ -114,7 +115,7 @@ public class TokenNode extends Symbol {
 				builder.println().indent();
 
 				for (int i = 0; i < size; i++) {
-					TokenNode child = children.get(i);
+					TemplateNode child = children.get(i);
 
 					child.toString(builder);
 

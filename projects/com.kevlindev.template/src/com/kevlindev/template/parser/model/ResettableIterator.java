@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.kevlindev.text;
+package com.kevlindev.template.parser.model;
 
 import java.util.Iterator;
 

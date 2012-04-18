@@ -1,12 +1,15 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 import java.util.ArrayList;
-import com.kevlindev.text.StringIterator;
+
+import com.kevlindev.template.parser.model.ListIterator;
+import com.kevlindev.template.parser.model.ResettableIterator;
+import com.kevlindev.template.parser.model.StringIterator;
+import com.kevlindev.template.parser.model.TemplateNode;
+
 import java.util.Map;
 import beaver.*;
 import java.util.List;
-import com.kevlindev.text.ListIterator;
-import com.kevlindev.text.ResettableIterator;
 import java.util.HashMap;
 import java.io.IOException;
 
@@ -30,7 +33,7 @@ public class TokenTreeParser extends Parser {
 		return properties;
 	}
 
-	public Object parse(TokenNode root) {
+	public Object parse(TemplateNode root) {
 		Object result = null;
 		
 		if (root != null) {
@@ -94,7 +97,7 @@ public class TokenTreeParser extends Parser {
 				Symbol wordSymbol = (Symbol) word;
 				String content = (String) wordSymbol.value;
 				
-				if (wordSymbol.getId() == TokenType.STRING.getIndex()) {
+				if (wordSymbol.getId() == TemplateTokenType.STRING.getIndex()) {
 					keywords.add(content.substring(1, content.length() - 1));
 				} else {
 					keywords.add(content);
@@ -117,7 +120,7 @@ public class TokenTreeParser extends Parser {
 				Symbol wordSymbol = (Symbol) word;
 				String content = (String) wordSymbol.value;
 				
-				if (wordSymbol.getId() == TokenType.STRING.getIndex()) {
+				if (wordSymbol.getId() == TemplateTokenType.STRING.getIndex()) {
 					operators.add(content.substring(1, content.length() - 1));
 				} else {
 					operators.add(content);

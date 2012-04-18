@@ -1,10 +1,10 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 /**
  * This class lists terminals used by the
  * grammar specified in "token.tree".
  */
-public class Terminals {
+public class TreeTerminals {
 	static public final short EOF = 0;
 	static public final short IDENTIFIER = 1;
 	static public final short DOWN = 2;

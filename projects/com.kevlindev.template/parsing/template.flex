@@ -1,4 +1,4 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -9,12 +9,12 @@ import beaver.Scanner;
 import beaver.Scanner;
 import beaver.Symbol;
 
-import com.kevlindev.tokens.TokenType;
+import com.kevlindev.tokens.TemplateTokenType;
 
 %%
 
 %public
-%class TokenLexer
+%class TemplateLexer
 %extends Scanner
 %type Symbol
 %yylexthrow Scanner.Exception
@@ -26,11 +26,11 @@ import com.kevlindev.tokens.TokenType;
 %column
 
 %{
-	public TokenLexer() {
+	public TemplateLexer() {
 		this((Reader) null);
 	}
 
-	private Symbol newToken(TokenType type, Object value) {
+	private Symbol newToken(TemplateTokenType type, Object value) {
 		return newToken(type.getIndex(), value);
 	}
 
@@ -53,7 +53,7 @@ import com.kevlindev.tokens.TokenType;
 			String text = yytext();
 			int end = yychar + text.length() - 1;
 
-			result = new Symbol(TokenType.EOF.getIndex(), yychar, end, text);
+			result = new Symbol(TemplateTokenType.EOF.getIndex(), yychar, end, text);
 		}
 
 		return result;
@@ -79,17 +79,17 @@ String = "\"" ([^\"\r\n] | "\\"[^\r\n]) "\""
 	{Whitespace}	{ /* ignore */ }
 	{Comment}		{ /* ignore */ }
 	
-	"="				{ return newToken(TokenType.EQUAL,		yytext()); }
-	"["				{ return newToken(TokenType.LBRACKET,	yytext()); }
-	"]"				{ return newToken(TokenType.RBRACKET,	yytext()); }
-	{String}		{ return newToken(TokenType.STRING,		yytext()); }
+	"="				{ return newToken(TemplateTokenType.EQUAL,		yytext()); }
+	"["				{ return newToken(TemplateTokenType.LBRACKET,	yytext()); }
+	"]"				{ return newToken(TemplateTokenType.RBRACKET,	yytext()); }
+	{String}		{ return newToken(TemplateTokenType.STRING,		yytext()); }
 	
-	"package"		{ return newToken(TokenType.PACKAGE,	yytext()); }
-	"language"		{ return newToken(TokenType.LANGUAGE,	yytext()); }
-	"keywords"		{ return newToken(TokenType.KEYWORDS,	yytext()); }
-	"operators"		{ return newToken(TokenType.OPERATORS,	yytext()); }
+	"package"		{ return newToken(TemplateTokenType.PACKAGE,	yytext()); }
+	"language"		{ return newToken(TemplateTokenType.LANGUAGE,	yytext()); }
+	"keywords"		{ return newToken(TemplateTokenType.KEYWORDS,	yytext()); }
+	"operators"		{ return newToken(TemplateTokenType.OPERATORS,	yytext()); }
 	
-	{DottedName}	{ return newToken(TokenType.IDENTIFIER,	yytext()); }
+	{DottedName}	{ return newToken(TemplateTokenType.IDENTIFIER,	yytext()); }
 }
 
 /* error fallback */

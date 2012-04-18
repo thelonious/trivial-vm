@@ -1,10 +1,10 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TokenType {
+public enum TemplateTokenType {
 	// @formatter:off
 	// token types
 	EQUAL(Terminals.EQUAL),
@@ -28,25 +28,25 @@ public enum TokenType {
 	UP((short) 4096, TreeTerminals.UP);
 	// @formatter:on
 
-	private static final Map<Short, TokenType> SYMBOL_ID_MAP;
-	private static final Map<Short, TokenType> TREE_SYMBOL_ID_MAP;
+	private static final Map<Short, TemplateTokenType> SYMBOL_ID_MAP;
+	private static final Map<Short, TemplateTokenType> TREE_SYMBOL_ID_MAP;
 
 	static {
-		SYMBOL_ID_MAP = new HashMap<Short, TokenType>();
+		SYMBOL_ID_MAP = new HashMap<Short, TemplateTokenType>();
 
-		for (TokenType type : EnumSet.allOf(TokenType.class)) {
+		for (TemplateTokenType type : EnumSet.allOf(TemplateTokenType.class)) {
 			SYMBOL_ID_MAP.put(type.getIndex(), type);
 		}
 
-		TREE_SYMBOL_ID_MAP = new HashMap<Short, TokenType>();
+		TREE_SYMBOL_ID_MAP = new HashMap<Short, TemplateTokenType>();
 
-		for (TokenType type : EnumSet.allOf(TokenType.class)) {
+		for (TemplateTokenType type : EnumSet.allOf(TemplateTokenType.class)) {
 			TREE_SYMBOL_ID_MAP.put(type.getTreeIndex(), type);
 		}
 	}
 
-	public static TokenType getTreeTokenType(short id) {
-		TokenType result = UNDEFINED;
+	public static TemplateTokenType getTreeTokenType(short id) {
+		TemplateTokenType result = UNDEFINED;
 
 		if (TREE_SYMBOL_ID_MAP.containsKey(id)) {
 			result = TREE_SYMBOL_ID_MAP.get(id);
@@ -55,8 +55,8 @@ public enum TokenType {
 		return result;
 	}
 
-	public static TokenType getTokenType(short id) {
-		TokenType result = UNDEFINED;
+	public static TemplateTokenType getTokenType(short id) {
+		TemplateTokenType result = UNDEFINED;
 
 		if (SYMBOL_ID_MAP.containsKey(id)) {
 			result = SYMBOL_ID_MAP.get(id);
@@ -68,12 +68,12 @@ public enum TokenType {
 	private short index;
 	private short treeIndex;
 
-	private TokenType(short index) {
+	private TemplateTokenType(short index) {
 		this.index = index;
 		this.treeIndex = -1;
 	}
 
-	private TokenType(short index, short treeIndex) {
+	private TemplateTokenType(short index, short treeIndex) {
 		this.index = index;
 		this.treeIndex = treeIndex;
 	}

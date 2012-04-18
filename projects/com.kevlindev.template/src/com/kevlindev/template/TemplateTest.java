@@ -1,4 +1,4 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -13,19 +13,22 @@ import java.util.regex.Pattern;
 
 import beaver.Scanner.Exception;
 
-import com.kevlindev.text.ResettableIterator;
+import com.kevlindev.template.parser.TemplateParser;
+import com.kevlindev.template.parser.TokenTreeParser;
+import com.kevlindev.template.parser.model.ResettableIterator;
+import com.kevlindev.template.parser.model.TemplateNode;
 import com.kevlindev.utils.CollectionUtils;
 import com.kevlindev.utils.IOUtils;
 
-public class Test {
+public class TemplateTest {
 	private static final Pattern VARIABLE = Pattern.compile("\\$\\{([a-z]+)\\}");
 
-	public Test() {
+	public TemplateTest() {
 	}
 
 	public void run(String file) throws IOException, Exception {
 		String source = IOUtils.getString(new FileInputStream(file));
-		TokenNode result = new TokenParser().parse(source);
+		TemplateNode result = new TemplateParser().parse(source);
 
 		System.out.println("result:");
 		System.out.println(result);
@@ -35,7 +38,7 @@ public class Test {
 
 		// apply properties
 		Map<String, ResettableIterator<String>> properties = parser.getProperties();
-		BufferedReader input = new BufferedReader(new FileReader("template/flex.ttmpl"));
+		BufferedReader input = new BufferedReader(new FileReader("template/flex-template"));
 
 		try {
 			String line = null;
@@ -121,11 +124,11 @@ public class Test {
 	 */
 	public static void main(String[] args) throws IOException, Exception {
 		if (args.length > 0) {
-			Test test = new Test();
+			TemplateTest test = new TemplateTest();
 
 			test.run(args[0]);
 		} else {
-			System.out.println("usage: <token-file>");
+			System.out.println("usage: <ttmpl-file>");
 		}
 	}
 }

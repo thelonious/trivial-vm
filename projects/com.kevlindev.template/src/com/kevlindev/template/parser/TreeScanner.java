@@ -1,11 +1,13 @@
 /**
  * 
  */
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
+
+import com.kevlindev.template.parser.model.TemplateNode;
 
 import beaver.Scanner;
 import beaver.Symbol;
@@ -17,23 +19,23 @@ import beaver.Symbol;
 public class TreeScanner extends Scanner {
 	Queue<Symbol> tokens = new ArrayDeque<Symbol>();
 
-	public void setNode(TokenNode node) {
+	public void setNode(TemplateNode node) {
 		tokens.offer(getMappedSymbol(node));
 
 		if (node.hasChildren()) {
-			tokens.offer(new Symbol(TokenType.DOWN.getTreeIndex()));
+			tokens.offer(new Symbol(TemplateTokenType.DOWN.getTreeIndex()));
 
-			for (TokenNode child : node.getChildren()) {
+			for (TemplateNode child : node.getChildren()) {
 				setNode(child);
 			}
 
-			tokens.offer(new Symbol(TokenType.UP.getTreeIndex()));
+			tokens.offer(new Symbol(TemplateTokenType.UP.getTreeIndex()));
 		}
 	}
 	
-	protected Symbol getMappedSymbol(TokenNode node) {
+	protected Symbol getMappedSymbol(TemplateNode node) {
 		Symbol s = node.getSymbol();
-		TokenType t = TokenType.getTokenType(s.getId());
+		TemplateTokenType t = TemplateTokenType.getTokenType(s.getId());
 		
 		return new Symbol(t.getTreeIndex(), s);
 	}
@@ -48,7 +50,7 @@ public class TreeScanner extends Scanner {
 		if (!tokens.isEmpty()) {
 			return tokens.poll();
 		} else {
-			return new Symbol(TokenType.EOF);
+			return new Symbol(TemplateTokenType.EOF);
 		}
 	}
 }

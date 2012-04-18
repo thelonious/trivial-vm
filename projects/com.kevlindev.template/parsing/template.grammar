@@ -1,16 +1,18 @@
 // java -jar beaver.jar -T -w tokens.grammar
-%package "com.kevlindev.tokens";
+%package "com.kevlindev.template.parser";
 
 %import "java.io.IOException";
 %import "java.util.List";
 %import "java.util.HashMap";
 %import "java.util.Map";
 
+%import "com.kevlindev.template.parser.model.TemplateNode";
+
 %class "TokenParser";
 
 %embed {:
-	public TokenNode parse(String source) {
-		TokenLexer lexer = new TokenLexer();
+	public TemplateNode parse(String source) {
+		TemplateLexer lexer = new TemplateLexer();
 
 		lexer.setSource(source);
 
@@ -24,7 +26,7 @@
 			e.printStackTrace();
 		}
 
-		return (result instanceof TokenNode) ? (TokenNode) result : null;
+		return (result instanceof TemplateNode) ? (TemplateNode) result : null;
 	}
 :};
 
@@ -32,15 +34,15 @@
 %terminals PACKAGE, LANGUAGE, KEYWORDS, OPERATORS;
 %terminals IDENTIFIER, STRING;
 
-%typeof Statement, Word = "TokenNode";
-%typeof List, Identifiers, Statements = "List<TokenNode>";
+%typeof Statement, Word = "TemplateNode";
+%typeof List, Identifiers, Statements = "List<TemplateNode>";
 
 %goal Grammar;
 
 Grammar
 	=	Statements.ss
 		{:
-			TokenNode result = new TokenNode(TokenType.ROOT);
+			TemplateNode result = new TemplateNode(TokenType.ROOT);
 			
 			result.addChildren(ss);
 			
@@ -57,7 +59,7 @@ Statements
 		:}
 	|	Statement.s
 		{:
-			List<TokenNode> result = new ArrayList<TokenNode>();
+			List<TemplateNode> result = new ArrayList<TemplateNode>();
 			
 			result.add(s);
 			
@@ -68,23 +70,23 @@ Statements
 Statement
 	=	PACKAGE.p EQUAL IDENTIFIER.i
 		{:
-			TokenNode result = new TokenNode(p);
+			TemplateNode result = new TemplateNode(p);
 			
-			result.addChild(new TokenNode(i));
+			result.addChild(new TemplateNode(i));
 			
 			return result;
 		:}
 	|	LANGUAGE.l EQUAL IDENTIFIER.i
 		{:
-			TokenNode result = new TokenNode(l);
+			TemplateNode result = new TemplateNode(l);
 			
-			result.addChild(new TokenNode(i));
+			result.addChild(new TemplateNode(i));
 			
 			return result;
 		:}
 	|	KEYWORDS.k EQUAL List.l
 		{:
-			TokenNode result = new TokenNode(k);
+			TemplateNode result = new TemplateNode(k);
 			
 			result.addChildren(l);
 			
@@ -92,7 +94,7 @@ Statement
 		:}
 	|	OPERATORS.o EQUAL List.l
 		{:
-			TokenNode result = new TokenNode(o);
+			TemplateNode result = new TemplateNode(o);
 			
 			result.addChildren(l);
 			
@@ -103,7 +105,7 @@ Statement
 List
 	=	LBRACKET RBRACKET
 		{:
-			return new Symbol(new ArrayList<TokenNode>());
+			return new Symbol(new ArrayList<TemplateNode>());
 		:}
 	|	LBRACKET Identifiers.i RBRACKET
 		{:
@@ -120,7 +122,7 @@ Identifiers
 		:}
 	|	Word.w
 		{:
-			List<TokenNode> result = new ArrayList<TokenNode>();
+			List<TemplateNode> result = new ArrayList<TemplateNode>();
 			
 			result.add(w);
 			
@@ -131,10 +133,10 @@ Identifiers
 Word
 	=	IDENTIFIER.i
 		{:
-			return new TokenNode(i);
+			return new TemplateNode(i);
 		:}
 	|	STRING.s
 		{:
-			return new TokenNode(s);
+			return new TemplateNode(s);
 		:}
 	;

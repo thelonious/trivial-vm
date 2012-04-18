@@ -1,4 +1,4 @@
-package com.kevlindev.tokens;
+package com.kevlindev.template.parser;
 
 /**
  * This class lists terminals used by the

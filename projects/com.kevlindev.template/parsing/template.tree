@@ -1,14 +1,14 @@
 // java -jar beaver.jar -T -w tokens.grammar
-%package "com.kevlindev.tokens";
+%package "com.kevlindev.template.parser";
 
 %import "java.io.IOException";
 %import "java.util.List";
 %import "java.util.HashMap";
 %import "java.util.Map";
 
-%import "com.kevlindev.text.ListIterator";
-%import "com.kevlindev.text.ResettableIterator";
-%import "com.kevlindev.text.StringIterator";
+%import "com.kevlindev.template.parser.model.ListIterator";
+%import "com.kevlindev.template.parser.model.ResettableIterator";
+%import "com.kevlindev.template.parser.model.StringIterator";
 
 %class "TokenTreeParser";
 

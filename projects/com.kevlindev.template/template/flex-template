@@ -82,10 +82,10 @@ Label = ":" {Identifier}
 	{Comment}		{ /* ignore */ }
 	
 	// emit operators
-	"${keywords}"	{ return newToken(${language}TokenType.${keywords},	 yytext()); }
+	"${operators}"	{ return newToken(${language}TokenType.${operators}, yytext()); }
 	
 	// emit keywords
-	"${operators}"	{ return newToken(${language}TokenType.${operators}, yytext()); }
+	"${keywords}"	{ return newToken(${language}TokenType.${keywords},	 yytext()); }
 	
 	// identifiers and such
 	{Label}			{ return newToken(${language}TokenType.LABEL,		yytext()); }
