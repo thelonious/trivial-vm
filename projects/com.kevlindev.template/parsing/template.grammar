@@ -42,7 +42,7 @@
 Grammar
 	=	Statements.ss
 		{:
-			TemplateNode result = new TemplateNode(TokenType.ROOT);
+			TemplateNode result = new TemplateNode(TemplateTokenType.ROOT);
 			
 			result.addChildren(ss);
 			

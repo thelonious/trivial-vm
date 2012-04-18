@@ -2,7 +2,7 @@ package com.kevlindev.template.parser;
 
 /**
  * This class lists terminals used by the
- * grammar specified in "token.grammar".
+ * grammar specified in "template.grammar".
  */
 public class Terminals {
 	static public final short EOF = 0;

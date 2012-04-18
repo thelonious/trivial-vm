@@ -7,36 +7,36 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import com.kevlindev.template.parser.model.TemplateNode;
-
 import beaver.Scanner;
 import beaver.Symbol;
+
+import com.kevlindev.parsing.model.ParseNode;
 
 /**
  * @author kevin
  * 
  */
-public class TreeScanner extends Scanner {
+public class TreeScanner<T> extends Scanner {
 	Queue<Symbol> tokens = new ArrayDeque<Symbol>();
 
-	public void setNode(TemplateNode node) {
+	public void setNode(ParseNode<T> node) {
 		tokens.offer(getMappedSymbol(node));
 
 		if (node.hasChildren()) {
 			tokens.offer(new Symbol(TemplateTokenType.DOWN.getTreeIndex()));
 
-			for (TemplateNode child : node.getChildren()) {
+			for (ParseNode<T> child : node.getChildren()) {
 				setNode(child);
 			}
 
 			tokens.offer(new Symbol(TemplateTokenType.UP.getTreeIndex()));
 		}
 	}
-	
-	protected Symbol getMappedSymbol(TemplateNode node) {
+
+	protected Symbol getMappedSymbol(ParseNode<T> node) {
 		Symbol s = node.getSymbol();
 		TemplateTokenType t = TemplateTokenType.getTokenType(s.getId());
-		
+
 		return new Symbol(t.getTreeIndex(), s);
 	}
 
