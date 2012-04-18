@@ -29,5 +29,4 @@ public class DisassemblerTest {
 			System.out.println("usage: tvm <tbin-filename>");
 		}
 	}
-
 }
