@@ -5,13 +5,8 @@ package com.kevlindev.mcpu.assembler;
 import java.io.Reader;
 import java.io.StringReader;
 
-import beaver.Symbol;
-import beaver.Scanner;
-
 import beaver.Scanner;
 import beaver.Symbol;
-
-import com.kevlindev.mcpu.assembler.MCPUTokenType;
 
 
 /**
